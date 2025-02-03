@@ -128,7 +128,7 @@ const UserPage = () => {
             </div>
             <button
               onClick={() => closeModal(false)}
-              className="w-full p-2 mt-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+              className="w-full p-2 mt-2 bg-gray-300 text-black rounded hover:bg-gray-400 transition-all"
             >
               Tutup
             </button>

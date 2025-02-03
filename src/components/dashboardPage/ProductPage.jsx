@@ -295,7 +295,7 @@ const ProductPage = () => {
               {modalType !== "read" && (
                 <button
                   type="submit"
-                  className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-all"
                 >
                   Simpan
                 </button>
@@ -303,7 +303,7 @@ const ProductPage = () => {
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="w-full p-2 mt-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+                className="w-full p-2 mt-2 bg-gray-300 text-black rounded hover:bg-gray-400 transition-all"
               >
                 Tutup
               </button>
