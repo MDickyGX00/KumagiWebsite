@@ -5,7 +5,7 @@ const Footer = () => {
         <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 md:text-left text-center">
           {/* Kolom 1: Nama Toko */}
           <div>
-            <h3 className="text-3xl font-bold mb-2 text-center">Kumagi Bake.</h3>
+            <a href="#home"><h3 className="text-3xl font-bold mb-2 text-center">Kumagi Bake.</h3></a>
           </div>
 
           {/* Kolom 2: Navbar */}
@@ -24,7 +24,7 @@ const Footer = () => {
           <div>
             <h3 className="text-2xl font-bold mb-2">Sosial Media</h3>
             <ul>
-              <li><a href="#" className="hover:underline">Instagram</a></li>
+              <li><a href="https://www.instagram.com/kumagi.bake?igsh=cTJkODYxejd0dHcw" className="hover:underline">Instagram</a></li>
             </ul>
           </div>
 

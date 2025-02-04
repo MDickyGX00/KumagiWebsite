@@ -38,7 +38,7 @@ const UserPage = () => {
     if (!confirmDelete) return;
 
     axios
-      .delete(`http://10.20.20.118:8080/review/${id}`) // Pastikan endpoint sudah sesuai
+      .delete(`http://10.20.20.23:8080/review/${id}`) // Pastikan endpoint sudah sesuai
       .then(() => {
         alert("Data berhasil dihapus!");
         setUsers(users.filter((user) => user.id !== id)); // Perbarui state
@@ -131,7 +131,7 @@ const UserPage = () => {
                   colSpan="5"
                   className="border border-gray-300 px-4 py-2 text-center text-gray-500"
                 >
-                  Tidak ada data pengguna.
+                  Tidak ada data review.
                 </td>
               </tr>
             )}
