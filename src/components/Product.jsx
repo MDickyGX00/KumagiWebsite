@@ -28,7 +28,7 @@ const Product = () => {
       : products.filter((product) => product.jenisMakanan === selectedCategory);
 
   return (
-    <div className="produk xl:px-10 px-5 pt-20 pb-20 bg-white" id="produk">
+    <div className="produk xl:px-20 px-5 pt-20 pb-20 bg-white" id="produk">
       <div className="flex items-center justify-center">
         <h1 className="text-center xl:text-5xl text-2xl">Produk Kami</h1>
       </div>
@@ -105,9 +105,6 @@ const Product = () => {
                       jenisMakananMap[product.jenisMakanan] || "Tidak Diketahui"
                     );
                   })()}
-                </p>
-                <p className=" mb-2 mx-2 px-4 text-xs sm:text-base py-1 rounded-full bg-yellow-300 inline-block text-right">
-                  Stok: {product.stokProduk}
                 </p>
                 <a
                   href={`https://wa.me/628985551285/`}

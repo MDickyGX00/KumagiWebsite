@@ -44,7 +44,6 @@ const ProductPage = () => {
     formData.append("namaProduk", currentProduct.namaProduk || "");
     formData.append("jenisMakanan", currentProduct.jenisMakanan || "");
     formData.append("hargaProduk", currentProduct.hargaProduk || 0);
-    formData.append("stokProduk", currentProduct.stokProduk || 0);
     formData.append("image", currentProduct.image || null);
 
     try {
@@ -99,9 +98,6 @@ const ProductPage = () => {
                 Harga
               </th>
               <th className="border border-gray-300 px-4 py-2 bg-gray-200">
-                Stok
-              </th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
                 Gambar
               </th>
               <th className="border border-gray-300 px-4 py-2 bg-gray-200">
@@ -134,9 +130,6 @@ const ProductPage = () => {
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
                     {product.hargaProduk}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {product.stokProduk}
                   </td>
                   <td className="border border-gray-300 px-4 py-2 flex justify-center">
                     {product.imageUrl ? (
@@ -240,22 +233,6 @@ const ProductPage = () => {
                   type="number"
                   name="hargaProduk"
                   value={currentProduct.hargaProduk || ""}
-                  onChange={(e) =>
-                    setCurrentProduct({
-                      ...currentProduct,
-                      [e.target.name]: e.target.value,
-                    })
-                  }
-                  className="w-full p-2 border border-gray-300 rounded"
-                  disabled={modalType === "read"}
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block mb-1">Stok</label>
-                <input
-                  type="number"
-                  name="stokProduk"
-                  value={currentProduct.stokProduk || ""}
                   onChange={(e) =>
                     setCurrentProduct({
                       ...currentProduct,
