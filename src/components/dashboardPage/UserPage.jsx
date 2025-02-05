@@ -34,19 +34,33 @@ const UserPage = () => {
         <table className="table-auto w-full border-collapse border border-gray-300">
           <thead>
             <tr>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">No</th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">Nama</th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">Email</th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">Aksi</th>
+              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+                No
+              </th>
+              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+                Nama
+              </th>
+              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+                Email
+              </th>
+              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+                Aksi
+              </th>
             </tr>
           </thead>
           <tbody>
             {users.length > 0 ? (
               users.map((user, index) => (
                 <tr key={index}>
-                  <td className="border border-gray-300 px-4 py-2 text-center">{index + 1}</td>
-                  <td className="border border-gray-300 px-4 py-2">{user.nama}</td>
-                  <td className="border border-gray-300 px-4 py-2">{user.email}</td>
+                  <td className="border border-gray-300 px-4 py-2 text-center">
+                    {index + 1}
+                  </td>
+                  <td className="border border-gray-300 px-4 py-2">
+                    {user.nama}
+                  </td>
+                  <td className="border border-gray-300 px-4 py-2">
+                    {user.email}
+                  </td>
                   <td className="border border-gray-300 px-4 py-2 text-center">
                     <div className="flex justify-center space-x-2">
                       <button
@@ -75,9 +89,7 @@ const UserPage = () => {
       {isModalOpen && selectedUser && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded shadow-lg w-96">
-            <h2 className="text-xl font-bold mb-4 text-center">
-              Detail User
-            </h2>
+            <h2 className="text-xl font-bold mb-4 text-center">Detail User</h2>
             <div className="mb-4">
               <label className="block font-semibold">Nama:</label>
               <p className="bg-gray-100 p-2 rounded">{selectedUser.nama}</p>

@@ -16,7 +16,6 @@ const UserPage = () => {
       .catch((error) => {
         console.error("Gagal mengambil data pengguna:", error);
       });
-      
   }, []);
   const handleRead = (user) => {
     setSelectedUser(user); // Simpan data pengguna yang dipilih
@@ -44,7 +43,6 @@ const UserPage = () => {
         console.error("Gagal menghapus data:", error);
         alert("Terjadi kesalahan saat menghapus data.");
       });
-
   };
 
   return (
@@ -83,7 +81,7 @@ const UserPage = () => {
                   </td>
                   <td className="border border-gray-300 px-4 py-2 text-center">
                     <div className="flex justify-center space-x-2">
-                    <button
+                      <button
                         onClick={() => handleRead(user)}
                         className="px-2 text-2xl text-blue-500 bg-white border-2 border-blue-500 hover:bg-blue-500 hover:text-white rounded-xl transition-all"
                       >
@@ -115,9 +113,7 @@ const UserPage = () => {
       {isModalOpen && selectedUser && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded shadow-lg w-96">
-            <h2 className="text-xl font-bold mb-4 text-center">
-              Detail User
-            </h2>
+            <h2 className="text-xl font-bold mb-4 text-center">Detail User</h2>
             <div className="mb-4">
               <label className="block font-semibold">Email:</label>
               <p className="bg-gray-100 p-2 rounded">{selectedUser.email}</p>

@@ -5,7 +5,6 @@ import ContactUs from "../components/ContactUs";
 import Product from "../components/Product";
 
 const HomePage = () => {
-
   return (
     <div className="mx-auto homepage">
       <div className="hero pt-20">
@@ -26,7 +25,7 @@ const HomePage = () => {
               <div className="button pt-5">
                 <a
                   href="#about"
-                  className="bg-yellow-500 px-14 py-3 rounded-md text-black font-bold hover:bg-yellow-400 transition-all"
+                  className="bg-yellow-400 px-14 py-3 rounded-md text-black font-bold hover:bg-yellow-500 transition-all"
                 >
                   Lebih Lanjut
                 </a>
@@ -74,9 +73,9 @@ const HomePage = () => {
           </div>
         </div>
       </div>
-      <CustomerReview/>
-      <Product/>
-      <ContactUs/>
+      <CustomerReview />
+      <Product />
+      <ContactUs />
     </div>
   );
 };

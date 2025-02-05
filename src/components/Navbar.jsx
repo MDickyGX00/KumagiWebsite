@@ -6,23 +6,22 @@ const Navbar = () => {
 
   const handleClick = () => {
     setTampil(!tampil);
-    
   };
 
   let menuActive = tampil ? "left-0" : "-left-full";
 
   useEffect(() => {
     window.addEventListener("scroll", () => {
-        if(window.scrollY > 5){
-            setScroll(true);
-            setTampil(false);
-        } else{
-            setScroll(false);
-        }
+      if (window.scrollY > 5) {
+        setScroll(true);
+        setTampil(false);
+      } else {
+        setScroll(false);
+      }
     });
   });
 
-let scrollActive = scroll ? "py-6 bg-white shadow" : "py-4";
+  let scrollActive = scroll ? "py-6 bg-white shadow" : "py-4";
 
   return (
     <div className={`navbar fixed w-full transition-all ${scrollActive}`}>
@@ -45,7 +44,7 @@ let scrollActive = scroll ? "py-6 bg-white shadow" : "py-4";
             <li className="flex items-center gap-3">
               <i className="ri-information-line text-3xl md:hidden block"></i>
               <a href="#about" className="font-medium opacity-75">
-              Tentang Kami
+                Tentang Kami
               </a>
             </li>
             <li className="flex items-center gap-3">
@@ -70,7 +69,7 @@ let scrollActive = scroll ? "py-6 bg-white shadow" : "py-4";
           <div className="social flex items-center gap-2">
             <a
               href="https://www.instagram.com/kumagi.bake?igsh=cTJkODYxejd0dHcw"
-              className="bg-yellow-500 px-5 py-2 rounded-full text-black font-bold hover:bg-yellow-400 transition-all"
+              className="bg-yellow-400 px-5 py-2 rounded-full text-black font-bold hover:bg-yellow-500 transition-all"
             >
               Sosial Media
             </a>

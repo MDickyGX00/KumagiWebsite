@@ -25,9 +25,7 @@ const Product = () => {
   const filteredProducts =
     selectedCategory === "Semua Produk"
       ? products
-      : products.filter(
-          (product) => product.jenisMakanan === selectedCategory
-        );
+      : products.filter((product) => product.jenisMakanan === selectedCategory);
 
   return (
     <div className="produk xl:px-10 px-5 pt-20 pb-20 bg-white" id="produk">
@@ -95,7 +93,7 @@ const Product = () => {
                 <p className="text-yellow-500 font-semibold px-4 pb-5 text-sm sm:text-xl">
                   Rp {product.hargaProduk.toLocaleString()}
                 </p>
-                
+
                 <p className="mb-2 mx-2 px-4 text-xs sm:text-base py-1 rounded-full bg-yellow-300 inline-block">
                   {(() => {
                     const jenisMakananMap = {
