@@ -26,9 +26,9 @@ const HomePage = () => {
               <div className="button pt-5">
                 <a
                   href="#about"
-                  className="bg-yellow-400 px-14 py-3 rounded-md text-black font-bold hover:bg-yellow-500 hover:text-white transition-all"
+                  className="bg-yellow-500 px-14 py-3 rounded-md text-black font-bold hover:bg-yellow-400 transition-all"
                 >
-                  Mulai
+                  Lebih Lanjut
                 </a>
               </div>
             </div>

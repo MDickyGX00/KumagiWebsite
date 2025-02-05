@@ -70,7 +70,7 @@ let scrollActive = scroll ? "py-6 bg-white shadow" : "py-4";
           <div className="social flex items-center gap-2">
             <a
               href="https://www.instagram.com/kumagi.bake?igsh=cTJkODYxejd0dHcw"
-              className="bg-yellow-400 px-5 py-2 rounded-full text-white font-bold hover:bg-yellow-500 hover:text-black transition-all"
+              className="bg-yellow-500 px-5 py-2 rounded-full text-black font-bold hover:bg-yellow-400 transition-all"
             >
               Sosial Media
             </a>
