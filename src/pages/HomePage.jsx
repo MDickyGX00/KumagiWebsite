@@ -42,6 +42,15 @@ const HomePage = () => {
           </div>
         </div>
         <div className="about grid xl:grid-cols-2 grid-cols-1 gap-5 xl:gap-20 items-center px-4 xl:px-8">
+          {/* Gambar di sebelah kiri */}
+          <div className="box xl:shadow-left shadow-all">
+            <img
+              src={AboutImage}
+              alt=""
+              className="md:w-full md:m-0 bg-no-repeat mx-auto"
+            />
+          </div>
+          {/* Teks di sebelah kanan */}
           <div className="box border-y-4 border-yellow-400 py-2">
             <p className="text-base/normal md:text-xl 2xl:text-2xl font-light">
               Kumagi Bake lahir dari cinta kami terhadap seni membuat kue dan
@@ -64,15 +73,9 @@ const HomePage = () => {
               siap menyempurnakan hari Anda.
             </p>
           </div>
-          <div className="box xl:shadow-left shadow-all">
-            <img
-              src={AboutImage}
-              alt=""
-              className="md:w-full md:m-0 bg-no-repeat mx-auto"
-            />
-          </div>
         </div>
       </div>
+
       <CustomerReview />
       <Product />
       <ContactUs />
