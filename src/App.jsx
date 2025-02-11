@@ -1,8 +1,14 @@
-import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
 import Footer from "./components/Footer";
-import AdminLogin from "./components/AdminLogin";
+import Login from "./components/Login";
+import Register from "./components/Register";
 import AdminDashboard from "./components/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -14,31 +20,33 @@ const App = () => {
   );
 };
 
-// Main Layout untuk mengatur Navbar, Footer, dan Komponen Halaman
 const MainLayout = () => {
   const location = useLocation();
-  const isLoginAdminPage = location.pathname === "/login-admin";
-  const isDashboardPage = location.pathname.startsWith("/dashboard"); // Periksa jika halaman adalah dashboard atau sub-halaman dashboard
+  const isDashboardPage = location.pathname.startsWith("/dashboard");
 
   return (
     <>
-      {/* Tampilkan Navbar jika bukan di halaman login-admin atau dashboard */}
-      {!isLoginAdminPage && !isDashboardPage && <Navbar />}
+      {/* Navbar hanya ditampilkan jika bukan di halaman login atau dashboard */}
+      {!isDashboardPage && <Navbar />}
 
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/login-admin" element={<AdminLogin />} />
+        <Route path="/register" element={<Register/>}/>
+        <Route path="/login" element={<Login />} />
         <Route
-          path="/dashboard/*" // Gunakan wildcard untuk routing internal di dashboard
+          path="/dashboard/*"
           element={
-            <ProtectedRoute>
-              <AdminDashboard />
-            </ProtectedRoute>
+            <>
+              {console.log("Mengakses /dashboard, ProtectedRoute dipanggil")}
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            </>
           }
         />
       </Routes>
 
-      {/* Tampilkan Footer hanya jika berada di HomePage */}
+      {/* Footer hanya muncul di halaman HomePage */}
       {location.pathname === "/" && <Footer />}
     </>
   );

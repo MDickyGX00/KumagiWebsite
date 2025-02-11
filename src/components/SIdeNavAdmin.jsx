@@ -1,14 +1,24 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
-const SideNavbar = ({ onMenuSelect, handleLogout }) => {
-  // State untuk melacak menu aktif
+const SideNavbar = ({ onMenuSelect }) => {
   const [activeMenu, setActiveMenu] = useState("Contact");
+  const navigate = useNavigate(); // Gunakan navigate untuk redirect
 
-  // Fungsi untuk menangani klik menu
+  // Fungsi menangani klik menu
   const handleMenuClick = (menu) => {
-    setActiveMenu(menu); // Perbarui menu aktif
-    onMenuSelect(menu); // Panggil fungsi untuk memberi tahu parent
+    setActiveMenu(menu);
+    onMenuSelect(menu);
+  };
+
+  // Fungsi logout dengan konfirmasi
+  const handleLogout = () => {
+    const confirmLogout = window.confirm("Apakah Anda yakin ingin logout?");
+    if (confirmLogout) {
+      sessionStorage.removeItem("token"); // Hapus token dari sessionStorage
+      navigate("/login"); // Redirect ke halaman login
+    }
   };
 
   return (
@@ -16,38 +26,17 @@ const SideNavbar = ({ onMenuSelect, handleLogout }) => {
       <div>
         <h2 className="text-lg font-bold mb-4">Admin Menu</h2>
         <ul className="space-y-2">
-          <li
-            className={`p-2 rounded cursor-pointer ${
-              activeMenu === "Contact" ? "bg-yellow-500 text-white" : "hover:bg-gray-200 transition-all"
-            }`}
-            onClick={() => handleMenuClick("Contact")}
-          >
-            Contact
-          </li>
-          <li
-            className={`p-2 rounded cursor-pointer ${
-              activeMenu === "User" ? "bg-yellow-500 text-white" : "hover:bg-gray-200 transition-all"
-            }`}
-            onClick={() => handleMenuClick("User")}
-          >
-            User
-          </li>
-          <li
-            className={`p-2 rounded cursor-pointer ${
-              activeMenu === "Product" ? "bg-yellow-500 text-white" : "hover:bg-gray-200 transition-all"
-            }`}
-            onClick={() => handleMenuClick("Product")}
-          >
-            Product
-          </li>
-          <li
-            className={`p-2 rounded cursor-pointer ${
-              activeMenu === "Reviews" ? "bg-yellow-500 text-white" : "hover:bg-gray-200 transition-all"
-            }`}
-            onClick={() => handleMenuClick("Reviews")}
-          >
-            Reviews
-          </li>
+          {["Contact", "User", "Product", "Reviews"].map((menu) => (
+            <li
+              key={menu}
+              className={`p-2 rounded cursor-pointer ${
+                activeMenu === menu ? "bg-yellow-500 text-white" : "hover:bg-gray-200 transition-all"
+              }`}
+              onClick={() => handleMenuClick(menu)}
+            >
+              {menu}
+            </li>
+          ))}
         </ul>
       </div>
       <button
@@ -62,8 +51,7 @@ const SideNavbar = ({ onMenuSelect, handleLogout }) => {
 
 // Validasi props menggunakan PropTypes
 SideNavbar.propTypes = {
-  onMenuSelect: PropTypes.func.isRequired, // Harus berupa fungsi
-  handleLogout: PropTypes.func.isRequired, // Harus berupa fungsi
+  onMenuSelect: PropTypes.func.isRequired,
 };
 
 export default SideNavbar;

@@ -45,6 +45,7 @@ const ProductPage = () => {
     formData.append("jenisMakanan", currentProduct.jenisMakanan || "");
     formData.append("hargaProduk", currentProduct.hargaProduk || 0);
     formData.append("image", currentProduct.image || null);
+    formData.append("deskripsi", currentProduct.deskripsiProduk || "");
 
     try {
       if (modalType === "add") {
@@ -52,7 +53,7 @@ const ProductPage = () => {
         alert("Produk berhasil ditambahkan!");
       } else if (modalType === "update") {
         await axios.put(
-          `http://10.20.20.118:8080/produk-makanan/${currentProduct.id}`,
+          `http://10.20.20.23:8080/produk-makanan/${currentProduct.id}`,
           formData
         );
         alert("Produk berhasil diperbarui!");
@@ -92,6 +93,9 @@ const ProductPage = () => {
                 Nama Produk
               </th>
               <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+                Deskripsi
+              </th>
+              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
                 Jenis
               </th>
               <th className="border border-gray-300 px-4 py-2 bg-gray-200">
@@ -114,6 +118,9 @@ const ProductPage = () => {
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
                     {product.namaProduk}
+                  </td>
+                  <td className="border border-gray-300 px-4 py-2">
+                    {product.deksripsiProduk}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
                     {(() => {
@@ -181,8 +188,8 @@ const ProductPage = () => {
       </div>
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded shadow-lg w-96">
-            <h2 className="text-xl font-bold mb-4">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-96">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
               {modalType === "add"
                 ? "Tambah Produk"
                 : modalType === "update"
@@ -191,7 +198,7 @@ const ProductPage = () => {
             </h2>
             <form onSubmit={handleFormSubmit}>
               <div className="mb-4">
-                <label className="block mb-1">Nama Produk</label>
+                <label className="block font-medium text-gray-700">Nama Produk</label>
                 <input
                   type="text"
                   name="namaProduk"
@@ -202,12 +209,12 @@ const ProductPage = () => {
                       [e.target.name]: e.target.value,
                     })
                   }
-                  className="w-full p-2 border border-gray-300 rounded"
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400"
                   disabled={modalType === "read"}
                 />
               </div>
               <div className="mb-4">
-                <label className="block mb-1">Jenis Makanan</label>
+                <label className="block font-medium text-gray-700">Jenis Makanan</label>
                 <select
                   name="jenisMakanan"
                   value={currentProduct.jenisMakanan || ""}
@@ -217,7 +224,7 @@ const ProductPage = () => {
                       [e.target.name]: e.target.value,
                     })
                   }
-                  className="w-full p-2 border border-gray-300 rounded"
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400"
                   disabled={modalType === "read"}
                 >
                   <option value="">Pilih Jenis</option>
@@ -228,7 +235,7 @@ const ProductPage = () => {
               </div>
 
               <div className="mb-4">
-                <label className="block mb-1">Harga</label>
+                <label className="block font-medium text-gray-700">Harga</label>
                 <input
                   type="number"
                   name="hargaProduk"
@@ -239,12 +246,12 @@ const ProductPage = () => {
                       [e.target.name]: e.target.value,
                     })
                   }
-                  className="w-full p-2 border border-gray-300 rounded"
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400"
                   disabled={modalType === "read"}
                 />
               </div>
               <div className="mb-4">
-                <label className="block mb-1">Gambar</label>
+                <label className="block font-medium text-gray-700">Gambar</label>
                 {modalType === "read" ? (
                   currentProduct.imageUrl ? (
                     <img
@@ -265,14 +272,14 @@ const ProductPage = () => {
                         image: e.target.files[0],
                       })
                     }
-                    className="w-full p-2 border border-gray-300 rounded"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400"
                   />
                 )}
               </div>
               {modalType !== "read" && (
                 <button
                   type="submit"
-                  className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-all"
+                  className="w-full p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all"
                 >
                   Simpan
                 </button>

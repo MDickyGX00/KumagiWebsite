@@ -68,7 +68,7 @@ const ContactUs = () => {
         </div>
 
         {/* Kanan: Form Kontak */}
-        <div>
+        <div className="bg-yellow-200 p-5 rounded-xl shadow-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium mb-1">
@@ -80,7 +80,7 @@ const ContactUs = () => {
                 name="email"
                 value={credentials.email}
                 onChange={handleChange}
-                className="w-full border px-4 py-2 rounded focus:outline-none focus:ring focus:ring-blue-300"
+                className="w-full border px-4 py-2 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
                 required
               />
             </div>
@@ -93,14 +93,14 @@ const ContactUs = () => {
                 name="pesan"
                 value={credentials.pesan}
                 onChange={handleChange}
-                className="w-full border px-4 py-2 rounded focus:outline-none focus:ring focus:ring-blue-300"
+                className="w-full border px-4 py-2 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
                 rows="4"
                 required
               ></textarea>
             </div>
             <button
               type="submit"
-              className="w-full bg-yellow-700 text-white py-2 rounded-full transition-all hover:bg-yellow-800"
+              className="w-full bg-yellow-700 text-white py-2 rounded-full transition-all hover:bg-yellow-800 shadow-lg"
             >
               Kirim
             </button>
