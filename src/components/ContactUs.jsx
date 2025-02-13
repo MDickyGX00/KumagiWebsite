@@ -14,7 +14,7 @@ const ContactUs = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("http://10.20.20.23:8080/kontak", credentials)
+      .post("http://localhost:8080/kontak", credentials)
       .then((response) => {
         console.log(response.data); // Debugging respons API
         alert("Pesan berhasil dikirim"); // Menampilkan pesan pop-up

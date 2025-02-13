@@ -59,7 +59,7 @@ function Register() {
               id="nama"
               type="nama"
               name="nama"
-              value={credentials.email}
+              value={credentials.nama}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded-md shadow-inner"
               required

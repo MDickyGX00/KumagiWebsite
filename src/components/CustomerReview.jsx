@@ -13,7 +13,7 @@ const CustomerReview = () => {
   // Mengambil data review dari database saat komponen dimuat
   useEffect(() => {
     axios
-      .get("http://10.20.20.23:8080/review")
+      .get("http://localhost:8080/review")
       .then((response) => {
         setReviews(response.data); // Simpan data review ke state
       })
@@ -31,7 +31,7 @@ const CustomerReview = () => {
 
     // Kirim review ke database
     axios
-      .post("http://10.20.20.23:8080/review", review)
+      .post("http://localhost:8080/review", review)
       .then((response) => {
         alert("Review berhasil ditambahkan!");
         setReviews([...reviews, response.data]); // Tambahkan review baru ke list

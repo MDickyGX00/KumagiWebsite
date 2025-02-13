@@ -1,27 +1,26 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "./axiosInstance";
-import { jwtDecode } from "jwt-decode"; // Pastikan sudah install jwt-decode
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 import brownKie from "../assets/images/brownkie.jpg";
 
 function Login() {
   const [credentials, setCredentials] = useState({ email: "", kataSandi: "" });
+  const [error] = useState(""); // Tambahkan state untuk pesan error
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    const token = Cookies.get("jwt_token");
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        console.log("Decoded Token:", decoded); // Tambahkan ini
-        if (decoded.role === "ADMIN") {
-          navigate("/dashboard");
-        } else {
-          navigate("/");
+        if (decoded?.role) {
+          navigate(decoded.role === "ADMIN" ? "/dashboard" : "/");
         }
       } catch (error) {
-        console.error("Invalid token:", error);
-        sessionStorage.removeItem("token");
+        console.error("Token tidak valid:", error);
+        Cookies.remove("jwt_token");
       }
     }
   }, [navigate]);
@@ -32,37 +31,24 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
-      const response = await axiosInstance.post("/login", credentials);
-      console.log("Response data:", response.data); // 👉 Cek data dari backend
-
-      const token = response.data.token;
-      if (!token) {
-        console.error("Token tidak ditemukan!");
-        return;
-      }
-
-      sessionStorage.setItem("token", token);
-
-      const decoded = jwtDecode(token);
-      console.log("Decoded JWT:", decoded); // 👉 Cek isi token
-
-      if (decoded.role === "ADMIN") {
-        console.log("Login sebagai ADMIN, redirect ke /dashboard");
-        navigate("/dashboard");
-      } else {
-        console.log("Login sebagai USER, redirect ke /");
-        navigate("/");
-      }
+      const response = await axiosInstance.post("/login", credentials, {
+        withCredentials: true, // ✅ Pastikan ini aktif!
+      });
+  
+      console.log("Response dari backend:", response.data); // 🔍 Debug respons
+  
+      const userRole = response.data.role;
+      if (!userRole) throw new Error("Role tidak ditemukan dalam respons backend.");
+  
+      navigate(userRole === "ADMIN" ? "/dashboard" : "/");
     } catch (error) {
-      console.error(
-        "Login error:",
-        error.response ? error.response.data : error.message
-      );
-      alert("Invalid credentials");
+      console.error("Login error:", error.response?.data || error.message);
+      alert("Login gagal, periksa email dan kata sandi!");
     }
   };
+  
 
   return (
     <div className="flex h-screen pt-20">
@@ -71,10 +57,17 @@ function Login() {
           onSubmit={handleSubmit}
           className="w-full md:w-96 p-8 bg-white shadow-lg rounded-md"
         >
-          <h2 className="text-4xl mb-6 text-center">Selamat Datang</h2>
+          <h2 className="text-4xl mb-6 text-center">Login</h2>
           <p className="pb-5 text-gray-500 text-center">
-            Silahkan Log in untuk mengakses akunmu.
+            Masukkan email dan password untuk masuk.
           </p>
+
+          {error && (
+            <div className="mb-4 p-2 text-sm text-red-600 bg-red-100 border border-red-400 rounded">
+              {error}
+            </div>
+          )}
+
           <div className="mb-4">
             <label
               htmlFor="email"
@@ -111,16 +104,10 @@ function Login() {
           </div>
           <button
             type="submit"
-            className="w-full py-2 mt-4 bg-yellow-400 text-white rounded-md hover:bg-yellow-500 hover:text-black transition-all"
+            className="w-full py-2 mt-4 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-all"
           >
             Login
           </button>
-          <p className="mt-4 text-center text-sm">
-            Belum punya akun?{" "}
-            <a href="/register" className="text-blue-500">
-              Daftar di sini
-            </a>
-          </p>
         </form>
       </div>
       <div className="hidden md:block md:w-1/2 bg-cover bg-center">

@@ -9,7 +9,7 @@ const UserPage = () => {
   // Mengambil data pengguna dari database saat komponen dimuat
   useEffect(() => {
     axios
-      .get("http://10.20.20.23:8080/kontak")
+      .get("http://localhost:8080/kontak")
       .then((response) => {
         setUsers(response.data); // Simpan data pengguna ke state
       })

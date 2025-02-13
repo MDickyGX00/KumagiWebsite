@@ -1,41 +1,43 @@
-import { Route, Routes, useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode"; // Pastikan sudah install jwt-decode
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 import ProductPage from "./dashboardPage/ProductPage";
 import AdminPage from "./dashboardPage/AdminPage";
 import ReviewPage from "./dashboardPage/ReviewsPage";
 import ContactPage from "./dashboardPage/ContactPage";
 import SideNavbar from "../components/SIdeNavAdmin";
+import { Routes, Route } from "react-router-dom";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
 
-  // Cek token saat pertama kali halaman dimuat
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
-
+    const token = Cookies.get("jwt_token");
     if (!token) {
-      alert("Anda harus login terlebih dahulu!");
-      navigate("/login");
+      console.error("Token tidak ditemukan, redirect ke login...");
+      navigate("/login", { replace: true });
       return;
     }
 
     try {
       const decoded = jwtDecode(token);
+      console.log("Decoded token:", decoded); // Debug hasil decode token
       if (decoded.role !== "ADMIN") {
-        alert("Akses ditolak! Anda bukan admin.");
-        navigate("/");
+        console.error("Anda bukan ADMIN, redirect ke halaman utama...");
+        Cookies.remove("jwt_token");
+        navigate("/", { replace: true });
       }
     } catch (error) {
-      console.error("Invalid token:", error);
-      sessionStorage.removeItem("token");
-      navigate("/login");
+      console.error("Token tidak valid:", error);
+      Cookies.remove("jwt_token");
+      navigate("/login", { replace: true });
     }
   }, [navigate]);
 
   const handleLogout = () => {
-    sessionStorage.removeItem("token"); // Hapus token login
-    navigate("/login"); // Arahkan ke halaman login
+    Cookies.remove("jwt_token");
+    navigate("/login", { replace: true });
   };
 
   const handleMenuSelect = (menu) => {
@@ -59,10 +61,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex h-screen">
-      {/* Side Navbar */}
       <SideNavbar onMenuSelect={handleMenuSelect} handleLogout={handleLogout} />
-
-      {/* Content Area */}
       <div className="flex-1 bg-gray-50 p-6">
         <Routes>
           <Route path="/contact" element={<ContactPage />} />

@@ -10,7 +10,7 @@ const Product = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
-          "http://10.20.20.23:8080/produk-makanan"
+          "http://localhost:8080/produk-makanan"
         );
         setProducts(response.data);
       } catch (error) {
@@ -32,7 +32,7 @@ const Product = () => {
       <div className="flex items-center justify-center">
         <h1 className="text-center xl:text-5xl text-2xl">Produk Kami</h1>
       </div>
-      <div className="mb-4 pt-10 pb-5">
+      <div className="mb-4 pt-10 pb-5 px-20">
         {/* Filter Kategori */}
         <button
           className={`mr-2 px-4 py-2 rounded transition-all ${
@@ -110,7 +110,7 @@ const Product = () => {
                   href={`https://wa.me/628985551285/`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block mt-2 text-center text-lg md:text-2xl text-white bg-yellow-400 hover:bg-yellow-500 hover:text-black transition-all py-1 md:py-2 px-4 rounded-b"
+                  className="block mt-2 text-center text-lg md:text-2xl text-black bg-yellow-400 hover:bg-yellow-500 transition-all py-1 md:py-2 px-4 rounded-b"
                 >
                   <i className="ri-whatsapp-line mx-2"></i>
                   Pesan

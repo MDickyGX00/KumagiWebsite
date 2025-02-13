@@ -15,7 +15,7 @@ const ProductPage = () => {
   const fetchProducts = async () => {
     try {
       const response = await axios.get(
-        "http://10.20.20.23:8080/produk-makanan"
+        "http://localhost:8080/produk-makanan"
       );
       setProducts(response.data);
     } catch (error) {
