@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 
 const Product = () => {
-  const [products, setProducts] = useState([]); // Data produk
-  const [selectedCategory, setSelectedCategory] = useState("Semua Produk"); // Kategori yang dipilih
+  const [products, setProducts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("Semua Produk");
+  const scrollContainerRef = useRef(null);
+  const [showModal, setShowModal] = useState(false);
+  const [currentProduct, setCurrentProduct] = useState(null);
 
-  // Fetch produk dari API
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -21,67 +23,58 @@ const Product = () => {
     fetchProducts();
   }, []);
 
-  // Filter produk berdasarkan kategori
   const filteredProducts =
     selectedCategory === "Semua Produk"
       ? products
       : products.filter((product) => product.jenisMakanan === selectedCategory);
 
+  const openModal = (product) => {
+    setCurrentProduct(product);
+    setShowModal(true);
+  };
+
+  const handleScroll = (event) => {
+    event.preventDefault(); // Mencegah scroll vertikal
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollLeft += event.deltaY * 2; // Menggeser lebih cepat
+    }
+  };
+
   return (
     <div className="produk xl:px-20 px-5 pt-20 pb-20 bg-white" id="produk">
       <div className="flex items-center justify-center">
-        <h1 className="text-center xl:text-5xl text-2xl">Produk Kami</h1>
+        <h1 className="text-center xl:text-5xl text-2xl pb-5">Produk Kami</h1>
       </div>
-      <div className="mb-4 pt-10 pb-5 px-20">
-        {/* Filter Kategori */}
-        <button
-          className={`mr-2 px-4 py-2 rounded transition-all ${
-            selectedCategory === "Semua Produk"
-              ? "bg-yellow-400 text-white"
-              : "bg-gray-200"
-          }`}
-          onClick={() => setSelectedCategory("Semua Produk")}
-        >
-          Semua Produk
-        </button>
-        <button
-          className={`mr-2 px-4 py-2 rounded transition-all ${
-            selectedCategory === "BOLU"
-              ? "bg-yellow-400 text-white"
-              : "bg-gray-200"
-          }`}
-          onClick={() => setSelectedCategory("BOLU")}
-        >
-          Bolu
-        </button>
-        <button
-          className={`mr-2 px-4 py-2 rounded transition-all ${
-            selectedCategory === "KUE_KERING"
-              ? "bg-yellow-400 text-white"
-              : "bg-gray-200"
-          }`}
-          onClick={() => setSelectedCategory("KUE_KERING")}
-        >
-          Kue Kering
-        </button>
-        <button
-          className={`px-4 py-2 rounded transition-all ${
-            selectedCategory === "BROWNIES"
-              ? "bg-yellow-400 text-white"
-              : "bg-gray-200"
-          }`}
-          onClick={() => setSelectedCategory("BROWNIES")}
-        >
-          Brownies
-        </button>
+      <div
+        ref={scrollContainerRef}
+        className="flex space-x-2 overflow-x-auto scrollbar-hide xl:px-20 py-5"
+        onWheel={handleScroll} // Menambahkan event scroll
+        style={{ scrollBehavior: "smooth", whiteSpace: "nowrap" }}
+      >
+        {["Semua Produk", "BOLU", "KUE_KERING", "BROWNIES"].map((category) => (
+          <button
+            key={category}
+            className={`px-4 py-2 rounded transition-all ${
+              selectedCategory === category
+                ? "bg-yellow-400 text-white"
+                : "bg-gray-200"
+            }`}
+            onClick={() => setSelectedCategory(category)}
+          >
+            {category.replace("_", " ")}
+          </button>
+        ))}
       </div>
 
-      {/* Daftar Produk */}
       <div className="xl:px-20">
         {filteredProducts.length > 0 ? (
           <ul className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-5 xl:gap-10">
             {filteredProducts.map((product, index) => (
-              <li key={index} className="border rounded shadow">
+              <li
+                key={index}
+                className="border rounded shadow cursor-pointer"
+                onClick={() => openModal(product)}
+              >
                 <img
                   src={product.imageUrl || "/placeholder.png"} // Gunakan placeholder jika gambar tidak tersedia
                   alt={product.namaProduk}
@@ -122,6 +115,68 @@ const Product = () => {
           <p className="text-center">Tidak ada produk untuk kategori ini.</p>
         )}
       </div>
+
+      {showModal && currentProduct && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-5xl h-auto overflow-y-auto">
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded"
+            >
+              ✕
+            </button>
+
+            {/* Kontainer Flexbox */}
+            <div className="flex flex-col md:flex-row gap-6">
+              {/* Bagian Gambar */}
+              <div className="md:w-1/2">
+                <img
+                  src={currentProduct.imageUrl}
+                  alt="Produk"
+                  className="w-auto h-auto object-cover rounded"
+                />
+              </div>
+
+              {/* Bagian Informasi */}
+              <div className="md:w-1/2">
+                <h2 className="text-2xl font-semibold text-gray-800">
+                  {currentProduct.namaProduk}
+                </h2>
+                <p className="text-lg text-yellow-500 font-semibold mt-2">
+                  Rp {currentProduct.hargaProduk.toLocaleString()}
+                </p>
+                <p className="my-2 px-4 text-xs sm:text-base py-1 rounded-full bg-yellow-300 inline-block">
+                  {(() => {
+                    const jenisMakananMap = {
+                      BOLU: "Bolu",
+                      KUE_KERING: "Kue Kering",
+                      BROWNIES: "Brownies",
+                    };
+                    return (
+                      jenisMakananMap[currentProduct.jenisMakanan] ||
+                      "Tidak Diketahui"
+                    );
+                  })()}
+                </p>
+
+                {/* Deskripsi Produk */}
+                <p className="mt-4 text-gray-700">
+                  {currentProduct.deskripsi || "Tidak ada deskripsi."}
+                </p>
+              </div>
+            </div>
+            <a
+              href={`https://wa.me/628985551285/`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block mt-2 text-center text-lg md:text-2xl text-black bg-yellow-400 hover:bg-yellow-500 transition-all py-1 md:py-2 px-4 rounded-b"
+            >
+              <i className="ri-whatsapp-line mx-2"></i>
+              Pesan
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
