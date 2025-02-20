@@ -10,6 +10,7 @@ function Register() {
     kataSandi: "",
   });
 
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -18,22 +19,24 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const response = await axiosInstance.post("/register", {
-        ...credentials,
-        role: "USER", // Pastikan role selalu USER
+        nama: credentials.nama,
+        email: credentials.email,
+        kataSandi: credentials.kataSandi,
+        role: "USER", // Pastikan role tetap USER
       });
 
       console.log("Register success:", response.data);
       alert("Pendaftaran berhasil! Silakan login.");
-      navigate("/login"); // Redirect ke halaman login setelah sukses
+      navigate("/login");
     } catch (error) {
-      console.error(
-        "Register error:",
-        error.response ? error.response.data : error.message
-      );
-      alert("Gagal mendaftar, coba lagi.");
+      console.error("Register error:", error.response?.data || error.message);
+      alert(error.response?.data?.message || "Gagal mendaftar, coba lagi.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -49,15 +52,12 @@ function Register() {
             Silahkan Daftar untuk membuat akunmu.
           </p>
           <div className="mb-4">
-            <label
-              htmlFor="nama"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="nama" className="block text-sm font-medium text-gray-700">
               Nama
             </label>
             <input
               id="nama"
-              type="nama"
+              type="text"
               name="nama"
               value={credentials.nama}
               onChange={handleChange}
@@ -66,10 +66,7 @@ function Register() {
             />
           </div>
           <div className="mb-4">
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email
             </label>
             <input
@@ -83,10 +80,7 @@ function Register() {
             />
           </div>
           <div className="mb-4">
-            <label
-              htmlFor="kataSandi"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="kataSandi" className="block text-sm font-medium text-gray-700">
               Password
             </label>
             <input
@@ -101,9 +95,12 @@ function Register() {
           </div>
           <button
             type="submit"
-            className="w-full py-2 mt-4 bg-yellow-400 text-black rounded-md hover:bg-yellow-500 transition-all"
+            className={`w-full py-2 mt-4 bg-yellow-400 text-black rounded-md hover:bg-yellow-500 transition-all ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={loading}
           >
-            Daftar
+            {loading ? "Mendaftar..." : "Daftar"}
           </button>
           <p className="mt-4 text-center text-sm">
             Sudah punya akun?{" "}
@@ -114,11 +111,7 @@ function Register() {
         </form>
       </div>
       <div className="hidden md:block md:w-1/2 bg-cover bg-center">
-        <img
-          src={brownKie}
-          alt="Gambar Login"
-          className="w-full h-full object-cover"
-        />
+        <img src={brownKie} alt="Gambar Login" className="w-full h-full object-cover" />
       </div>
     </div>
   );

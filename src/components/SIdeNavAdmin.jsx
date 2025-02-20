@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import axiosInstance from "./axiosInstance";
 
 const SideNavbar = ({ onMenuSelect }) => {
   const [activeMenu, setActiveMenu] = useState("Contact");
@@ -13,13 +14,22 @@ const SideNavbar = ({ onMenuSelect }) => {
   };
 
   // Fungsi logout dengan konfirmasi
-  const handleLogout = () => {
+  const handleLogout = async () => {
     const confirmLogout = window.confirm("Apakah Anda yakin ingin logout?");
     if (confirmLogout) {
-      sessionStorage.removeItem("token"); // Hapus token dari sessionStorage
-      navigate("/login"); // Redirect ke halaman login
+      try {
+        await axiosInstance.post("/logout"); // Panggil API logout
+  
+        // Hapus cookie JWT
+        document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+  
+        navigate("/login"); // Redirect ke halaman login
+      } catch (error) {
+        console.error("Logout gagal", error);
+      }
     }
   };
+  
 
   return (
     <div className="w-1/5 bg-gray-100 p-4 flex flex-col justify-between">

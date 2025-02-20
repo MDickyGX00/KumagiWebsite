@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "./axiosInstance";
+import Cookies from "js-cookie";
 
 const CustomerReview = () => {
   const [showModal, setShowModal] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false); // Modal untuk peringatan login
   const [review, setReview] = useState({
     nama: "",
     komentar: "",
@@ -12,14 +15,31 @@ const CustomerReview = () => {
 
   // Mengambil data review dari database saat komponen dimuat
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/review")
+    axiosInstance
+      .get("/review") // 🔹 Gunakan axiosInstance agar lebih clean
       .then((response) => {
         setReviews(response.data); // Simpan data review ke state
       })
       .catch((error) => {
         console.error("Gagal mengambil data review:", error);
       });
+    const token = Cookies.get("jwt_token");
+    console.log("Token di cookies:", token); // Debugging
+
+    if (token) {
+      axiosInstance
+        .get("/validate-token")
+        .then(() => {
+          console.log("Token valid, set isLoggedIn ke true");
+          setIsLoggedIn(true);
+        })
+        .catch(() => {
+          console.log("Token tidak valid, set isLoggedIn ke false");
+          setIsLoggedIn(false);
+        });
+    } else {
+      setIsLoggedIn(false);
+    }
   }, []);
 
   const handleChange = (e) => {
@@ -28,20 +48,27 @@ const CustomerReview = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Kirim review ke database
-    axios
-      .post("http://localhost:8080/review", review)
+    axiosInstance
+      .post("/review", review)
       .then((response) => {
         alert("Review berhasil ditambahkan!");
-        setReviews([...reviews, response.data]); // Tambahkan review baru ke list
-        setReview({ nama: "", komentar: "", nilai: 0 }); // Reset form
-        setShowModal(false); // Tutup modal
+        setReviews([...reviews, response.data]);
+        setReview({ nama: "", komentar: "", nilai: 0 });
+        setShowModal(false);
       })
-      .catch((error) => {
-        console.error("Gagal menambahkan review:", error);
+      .catch(() => {
         alert("Gagal menambahkan review. Silakan coba lagi.");
       });
+  };
+
+  const handleAddReviewClick = () => {
+    if (!isLoggedIn) {
+      console.log("User tidak login, membuka modal peringatan...");
+      setShowLoginModal(true);
+    } else {
+      console.log("User sudah login, membuka modal review...");
+      setShowModal(true);
+    }
   };
 
   return (
@@ -67,7 +94,7 @@ const CustomerReview = () => {
       </div>
       <div className="text-center mt-6">
         <button
-          onClick={() => setShowModal(true)}
+          onClick={handleAddReviewClick}
           className="bg-yellow-700 text-white transition-all py-2 px-4 rounded-full hover:bg-yellow-800"
         >
           Tambah Review
@@ -152,6 +179,22 @@ const CustomerReview = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {showLoginModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-96 text-center">
+            <h2 className="text-lg font-bold mb-4">Anda Harus Login</h2>
+            <p>Silakan login terlebih dahulu untuk menambahkan review.</p>
+            <div className="mt-4">
+              <button
+                onClick={() => setShowLoginModal(false)}
+                className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+              >
+                Tutup
+              </button>
+            </div>
           </div>
         </div>
       )}

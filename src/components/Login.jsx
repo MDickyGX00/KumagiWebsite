@@ -7,9 +7,10 @@ import brownKie from "../assets/images/brownkie.jpg";
 
 function Login() {
   const [credentials, setCredentials] = useState({ email: "", kataSandi: "" });
-  const [error] = useState(""); // Tambahkan state untuk pesan error
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // Cek jika user sudah login
   useEffect(() => {
     const token = Cookies.get("jwt_token");
     if (token) {
@@ -31,24 +32,38 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
   
     try {
       const response = await axiosInstance.post("/login", credentials, {
-        withCredentials: true, // ✅ Pastikan ini aktif!
+        withCredentials: true, // Pastikan ini ada agar cookie diterima
+      });
+      console.log("Response dari backend:", response.data); // Debugging
+  
+      const { token, role } = response.data;
+  
+      if (!token || !role) {
+        console.error("Kesalahan: Respons tidak berisi token atau role.", response.data);
+        throw new Error("Login gagal, respons tidak valid.");
+      }
+  
+      // Simpan token ke cookie dengan konfigurasi yang benar
+      Cookies.set("jwt_token", token, {
+        path: "/",
+        domain: "10.20.20.213", // Pastikan sesuai dengan domain backend
+        sameSite: "Lax", // Untuk menghindari penolakan cookie di browser
+        secure: false, // Set `true` jika menggunakan HTTPS
+        expires: 1,
       });
   
-      console.log("Response dari backend:", response.data); // 🔍 Debug respons
-  
-      const userRole = response.data.role;
-      if (!userRole) throw new Error("Role tidak ditemukan dalam respons backend.");
-  
-      navigate(userRole === "ADMIN" ? "/dashboard" : "/");
+      // Redirect berdasarkan role
+      navigate(role === "ADMIN" ? "/dashboard" : "/");
     } catch (error) {
       console.error("Login error:", error.response?.data || error.message);
-      alert("Login gagal, periksa email dan kata sandi!");
+      setError("Login gagal, periksa email dan kata sandi!");
     }
   };
-  
+
 
   return (
     <div className="flex h-screen pt-20">

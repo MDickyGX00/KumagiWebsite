@@ -1,7 +1,9 @@
 import { useEffect } from "react";
+import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
+import axiosInstance from "../components/axiosInstance";
 import ProductPage from "./dashboardPage/ProductPage";
 import AdminPage from "./dashboardPage/AdminPage";
 import ReviewPage from "./dashboardPage/ReviewsPage";
@@ -9,20 +11,22 @@ import ContactPage from "./dashboardPage/ContactPage";
 import SideNavbar from "../components/SIdeNavAdmin";
 import { Routes, Route } from "react-router-dom";
 
-const AdminDashboard = () => {
+const AdminDashboard = ({ setUserRole }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = Cookies.get("jwt_token");
+  
     if (!token) {
-      console.error("Token tidak ditemukan, redirect ke login...");
+      console.error("Tidak ada token, redirect ke login...");
       navigate("/login", { replace: true });
       return;
     }
-
+  
     try {
       const decoded = jwtDecode(token);
-      console.log("Decoded token:", decoded); // Debug hasil decode token
+      console.log("Decoded token:", decoded);
+  
       if (decoded.role !== "ADMIN") {
         console.error("Anda bukan ADMIN, redirect ke halaman utama...");
         Cookies.remove("jwt_token");
@@ -33,11 +37,23 @@ const AdminDashboard = () => {
       Cookies.remove("jwt_token");
       navigate("/login", { replace: true });
     }
-  }, [navigate]);
+  }, [navigate]);  
 
-  const handleLogout = () => {
-    Cookies.remove("jwt_token");
-    navigate("/login", { replace: true });
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.post("/logout", {}, { withCredentials: true });
+
+      // Hapus semua data login di frontend
+      Cookies.remove("jwt_token");
+      sessionStorage.clear();
+      localStorage.clear();
+      setUserRole(null); // Reset state userRole
+
+      console.log("✅ Logout berhasil, redirect ke login...");
+      navigate("/login", { replace: true });
+    } catch (error) {
+      console.error("❌ Logout gagal:", error);
+    }
   };
 
   const handleMenuSelect = (menu) => {
@@ -82,5 +98,7 @@ const AdminDashboard = () => {
     </div>
   );
 };
-
+AdminDashboard.propTypes = {
+  setUserRole: PropTypes.func.isRequired,
+};
 export default AdminDashboard;

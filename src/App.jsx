@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes, useNavigate, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, useNavigate, useLocation, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
@@ -42,11 +42,13 @@ const MainLayout = () => {
   }, []);
 
   useEffect(() => {
-    if (isDashboardPage && userRole !== "ADMIN") {
-      console.error("Akses ditolak: bukan ADMIN");
-      navigate("/login", { replace: true });
+    if (!loading) {
+      if (isDashboardPage && userRole !== "ADMIN") {
+        console.error("Akses ditolak: bukan ADMIN");
+        navigate("/login", { replace: true });
+      }
     }
-  }, [userRole, isDashboardPage, navigate]);
+  }, [userRole, isDashboardPage, navigate, loading]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -59,7 +61,10 @@ const MainLayout = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login setUserRole={setUserRole} />} />
-        <Route path="/dashboard" element={userRole === "ADMIN" ? <AdminDashboard /> : <HomePage />} />
+        <Route
+          path="/dashboard"
+          element={userRole === "ADMIN" ? <AdminDashboard /> : <Navigate to="/login" />}
+        />
       </Routes>
       {location.pathname === "/" && <Footer />}
     </>
