@@ -238,10 +238,12 @@ const Navbar = () => {
         <hr className="border-gray-200" />
         <a href="/#testimoni" className="block px-4 py-2 text-black-300">
           Testimoni
-        </a><hr className="border-gray-200" />
+        </a>
+        <hr className="border-gray-200" />
         <a href="/#produk" className="block px-4 py-2 text-black-300">
           Produk
-        </a><hr className="border-gray-200" />
+        </a>
+        <hr className="border-gray-200" />
         <hr className="border-gray-200" />
         <a href="/#kontak" className="block px-4 py-2 text-black-300">
           Kontak

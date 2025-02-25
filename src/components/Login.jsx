@@ -33,20 +33,23 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-  
+
     try {
       const response = await axiosInstance.post("/login", credentials, {
         withCredentials: true, // Pastikan ini ada agar cookie diterima
       });
       console.log("Response dari backend:", response.data); // Debugging
-  
+
       const { token, role } = response.data;
-  
+
       if (!token || !role) {
-        console.error("Kesalahan: Respons tidak berisi token atau role.", response.data);
+        console.error(
+          "Kesalahan: Respons tidak berisi token atau role.",
+          response.data
+        );
         throw new Error("Login gagal, respons tidak valid.");
       }
-  
+
       // Simpan token ke cookie dengan konfigurasi yang benar
       Cookies.set("jwt_token", token, {
         path: "/",
@@ -55,7 +58,7 @@ function Login() {
         secure: false, // Set `true` jika menggunakan HTTPS
         expires: 1,
       });
-  
+
       // Redirect berdasarkan role
       navigate(role === "ADMIN" ? "/dashboard" : "/");
     } catch (error) {
@@ -63,7 +66,6 @@ function Login() {
       setError("Login gagal, periksa email dan kata sandi!");
     }
   };
-
 
   return (
     <div className="flex h-screen pt-20">

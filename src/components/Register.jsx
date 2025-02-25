@@ -52,7 +52,10 @@ function Register() {
             Silahkan Daftar untuk membuat akunmu.
           </p>
           <div className="mb-4">
-            <label htmlFor="nama" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="nama"
+              className="block text-sm font-medium text-gray-700"
+            >
               Nama
             </label>
             <input
@@ -66,7 +69,10 @@ function Register() {
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email
             </label>
             <input
@@ -80,7 +86,10 @@ function Register() {
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="kataSandi" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="kataSandi"
+              className="block text-sm font-medium text-gray-700"
+            >
               Password
             </label>
             <input
@@ -111,7 +120,11 @@ function Register() {
         </form>
       </div>
       <div className="hidden md:block md:w-1/2 bg-cover bg-center">
-        <img src={brownKie} alt="Gambar Login" className="w-full h-full object-cover" />
+        <img
+          src={brownKie}
+          alt="Gambar Login"
+          className="w-full h-full object-cover"
+        />
       </div>
     </div>
   );

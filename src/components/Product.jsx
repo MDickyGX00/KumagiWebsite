@@ -115,76 +115,75 @@ const Product = () => {
       </div>
 
       {showModal && currentProduct && (
-  <div
-    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 sm:px-6 z-50" // Pastikan modal di atas navbar
-    onClick={() => setShowModal(false)} // Klik luar modal untuk menutup
-  >
-    <div
-      className="bg-white p-6 rounded-lg shadow-xl w-full max-w-5xl h-auto max-h-[90vh] overflow-y-auto relative" // max-h untuk mencegah modal terlalu panjang
-      onClick={(e) => e.stopPropagation()} // Mencegah modal tertutup saat diklik di dalam
-    >
-      {/* Tombol Close */}
-      <button
-        onClick={() => setShowModal(false)}
-        className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-red-500 text-white px-3 py-1 rounded text-lg sm:text-xl z-50" // Tambahkan z-50 agar tombol tetap terlihat
-      >
-        ✕
-      </button>
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center px-4 sm:px-6 z-50" // Pastikan modal di atas navbar
+          onClick={() => setShowModal(false)} // Klik luar modal untuk menutup
+        >
+          <div
+            className="bg-white p-6 rounded-lg shadow-xl w-full max-w-5xl h-auto max-h-[90vh] overflow-y-auto relative" // max-h untuk mencegah modal terlalu panjang
+            onClick={(e) => e.stopPropagation()} // Mencegah modal tertutup saat diklik di dalam
+          >
+            {/* Tombol Close */}
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-red-500 text-white px-3 py-1 rounded text-lg sm:text-xl z-50" // Tambahkan z-50 agar tombol tetap terlihat
+            >
+              ✕
+            </button>
 
-      {/* Kontainer Flexbox */}
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* Bagian Gambar */}
-        <div className="md:w-1/2">
-          <img
-            src={currentProduct.imageUrl}
-            alt="Produk"
-            className="w-full h-auto object-cover rounded"
-          />
+            {/* Kontainer Flexbox */}
+            <div className="flex flex-col md:flex-row gap-6">
+              {/* Bagian Gambar */}
+              <div className="md:w-1/2">
+                <img
+                  src={currentProduct.imageUrl}
+                  alt="Produk"
+                  className="w-full h-auto object-cover rounded"
+                />
+              </div>
+
+              {/* Bagian Informasi */}
+              <div className="md:w-1/2">
+                <h2 className="text-2xl font-semibold text-gray-800">
+                  {currentProduct.namaProduk}
+                </h2>
+                <p className="text-lg text-yellow-500 font-semibold mt-2">
+                  Rp {currentProduct.hargaProduk.toLocaleString()}
+                </p>
+                <p className="my-2 px-4 text-xs sm:text-base py-1 rounded-full bg-yellow-300 inline-block">
+                  {(() => {
+                    const jenisMakananMap = {
+                      BOLU: "Bolu",
+                      KUE_KERING: "Kue Kering",
+                      BROWNIES: "Brownies",
+                    };
+                    return (
+                      jenisMakananMap[currentProduct.jenisMakanan] ||
+                      "Tidak Diketahui"
+                    );
+                  })()}
+                </p>
+
+                {/* Deskripsi Produk */}
+                <p className="mt-4 text-gray-700">
+                  {currentProduct.deskripsi || "Tidak ada deskripsi."}
+                </p>
+              </div>
+            </div>
+
+            {/* Tombol Pesan WhatsApp */}
+            <a
+              href={`https://wa.me/628985551285/`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block mt-2 text-center text-lg md:text-2xl text-black bg-yellow-400 hover:bg-yellow-500 transition-all py-1 md:py-2 px-4 rounded-b"
+            >
+              <i className="ri-whatsapp-line mx-2"></i>
+              Pesan
+            </a>
+          </div>
         </div>
-
-        {/* Bagian Informasi */}
-        <div className="md:w-1/2">
-          <h2 className="text-2xl font-semibold text-gray-800">
-            {currentProduct.namaProduk}
-          </h2>
-          <p className="text-lg text-yellow-500 font-semibold mt-2">
-            Rp {currentProduct.hargaProduk.toLocaleString()}
-          </p>
-          <p className="my-2 px-4 text-xs sm:text-base py-1 rounded-full bg-yellow-300 inline-block">
-            {(() => {
-              const jenisMakananMap = {
-                BOLU: "Bolu",
-                KUE_KERING: "Kue Kering",
-                BROWNIES: "Brownies",
-              };
-              return (
-                jenisMakananMap[currentProduct.jenisMakanan] ||
-                "Tidak Diketahui"
-              );
-            })()}
-          </p>
-
-          {/* Deskripsi Produk */}
-          <p className="mt-4 text-gray-700">
-            {currentProduct.deskripsi || "Tidak ada deskripsi."}
-          </p>
-        </div>
-      </div>
-
-      {/* Tombol Pesan WhatsApp */}
-      <a
-        href={`https://wa.me/628985551285/`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block mt-2 text-center text-lg md:text-2xl text-black bg-yellow-400 hover:bg-yellow-500 transition-all py-1 md:py-2 px-4 rounded-b"
-      >
-        <i className="ri-whatsapp-line mx-2"></i>
-        Pesan
-      </a>
-    </div>
-  </div>
-)}
-
+      )}
     </div>
   );
 };

@@ -18,10 +18,11 @@ const SideNavbar = ({ onMenuSelect }) => {
   const handleLogout = async () => {
     try {
       await axiosInstance.post("/logout"); // Panggil API logout
-      
+
       // Hapus cookie JWT
-      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-      
+      document.cookie =
+        "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+
       navigate("/login"); // Redirect ke halaman login
     } catch (error) {
       console.error("Logout gagal", error);
@@ -37,7 +38,9 @@ const SideNavbar = ({ onMenuSelect }) => {
             <li
               key={menu}
               className={`p-2 rounded cursor-pointer ${
-                activeMenu === menu ? "bg-yellow-500 text-white" : "hover:bg-gray-200 transition-all"
+                activeMenu === menu
+                  ? "bg-yellow-500 text-white"
+                  : "hover:bg-gray-200 transition-all"
               }`}
               onClick={() => handleMenuClick(menu)}
             >
