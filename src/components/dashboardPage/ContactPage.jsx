@@ -1,30 +1,32 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
+import axiosInstance from "../axiosInstance";
 
-const UserPage = () => {
-  const [users, setUsers] = useState([]); // State untuk menyimpan data pengguna
-  const [selectedUser, setSelectedUser] = useState(null); // State untuk data pengguna yang dipilih
+const ContactPage = () => {
+  const [contacts, setContacts] = useState([]); // State untuk menyimpan data kontak
+  const [selectedContact, setSelectedContact] = useState(null); // State untuk data kontak yang dipilih
   const [isModalOpen, setIsModalOpen] = useState(false); // State untuk modal
+  const [showNotification, setShowNotification] = useState(false); // Modal notifikasi
+  const [notificationMessage, setNotificationMessage] = useState(""); // Pesan notifikasi
 
-  // Mengambil data pengguna dari database saat komponen dimuat
+  // Mengambil data kontak dari database saat komponen dimuat
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/kontak")
+    axiosInstance
+      .get("/kontak")
       .then((response) => {
-        setUsers(response.data); // Simpan data pengguna ke state
+        setContacts(response.data); // Simpan data kontak ke state
       })
       .catch((error) => {
-        console.error("Gagal mengambil data pengguna:", error);
+        console.error("Gagal mengambil data kontak:", error);
       });
   }, []);
-  const handleRead = (user) => {
-    setSelectedUser(user); // Simpan data pengguna yang dipilih
+  const handleRead = (contact) => {
+    setSelectedContact(contact); // Simpan data kontak yang dipilih
     setIsModalOpen(true); // Buka modal
   };
 
   // Fungsi untuk menutup modal
   const closeModal = () => {
-    setSelectedUser(null); // Reset data pengguna yang dipilih
+    setSelectedContact(null); // Reset data kontak yang dipilih
     setIsModalOpen(false); // Tutup modal
   };
   const handleDelete = (id) => {
@@ -33,16 +35,21 @@ const UserPage = () => {
     );
     if (!confirmDelete) return;
 
-    axios
-      .delete(`http://10.20.20.118:8080/kontak/${id}`) // Pastikan endpoint sudah sesuai
+    axiosInstance
+      .delete(`/kontak/${id}`) // Pastikan endpoint sudah sesuai
       .then(() => {
-        alert("Data berhasil dihapus!");
-        setUsers(users.filter((user) => user.id !== id)); // Perbarui state
+        showAlert("Data berhasil dihapus!");
+        setContacts(contacts.filter((contact) => contact.id !== id)); // Perbarui state
       })
       .catch((error) => {
         console.error("Gagal menghapus data:", error);
-        alert("Terjadi kesalahan saat menghapus data.");
+        showAlert("Terjadi kesalahan saat menghapus data.");
       });
+  };
+
+  const showAlert = (message) => {
+    setNotificationMessage(message);
+    setShowNotification(true);
   };
 
   return (
@@ -67,28 +74,28 @@ const UserPage = () => {
             </tr>
           </thead>
           <tbody>
-            {users.length > 0 ? (
-              users.map((user, index) => (
+            {contacts.length > 0 ? (
+              contacts.map((contact, index) => (
                 <tr key={index}>
                   <td className="border border-gray-300 px-4 py-2 text-center">
                     {index + 1}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {user.email}
+                    {contact.email}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {user.pesan}
+                    {contact.pesan}
                   </td>
                   <td className="border border-gray-300 px-4 py-2 text-center">
                     <div className="flex justify-center space-x-2">
                       <button
-                        onClick={() => handleRead(user)}
+                        onClick={() => handleRead(contact)}
                         className="px-2 text-2xl text-blue-500 bg-white border-2 border-blue-500 hover:bg-blue-500 hover:text-white rounded-xl transition-all"
                       >
                         <i className="ri-eye-line"></i>
                       </button>
                       <button
-                        onClick={() => handleDelete(user.id)}
+                        onClick={() => handleDelete(contact.id)}
                         className="px-2 text-2xl text-red-500 bg-white border-2 border-red-500 hover:bg-red-500 hover:text-white rounded-xl transition-all"
                       >
                         <i className="ri-delete-bin-5-fill"></i>
@@ -103,24 +110,26 @@ const UserPage = () => {
                   colSpan="3"
                   className="border border-gray-300 px-4 py-2 text-center text-gray-500"
                 >
-                  Tidak ada data pengguna.
+                  Tidak ada data kontak.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
-      {isModalOpen && selectedUser && (
+      {isModalOpen && selectedContact && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded shadow-lg w-96">
-            <h2 className="text-xl font-bold mb-4 text-center">Detail User</h2>
+            <h2 className="text-xl font-bold mb-4 text-center">
+              Detail Kontak
+            </h2>
             <div className="mb-4">
               <label className="block font-semibold">Email:</label>
-              <p className="bg-gray-100 p-2 rounded">{selectedUser.email}</p>
+              <p className="bg-gray-100 p-2 rounded">{selectedContact.email}</p>
             </div>
             <div className="mb-4">
               <label className="block font-semibold">Komentar:</label>
-              <p className="bg-gray-100 p-2 rounded">{selectedUser.pesan}</p>
+              <p className="bg-gray-100 p-2 rounded">{selectedContact.pesan}</p>
             </div>
             <button
               onClick={() => closeModal(false)}
@@ -131,8 +140,16 @@ const UserPage = () => {
           </div>
         </div>
       )}
+      {showNotification && (
+        <div className="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg">
+          {notificationMessage}
+          <button onClick={() => setShowNotification(false)} className="ml-4">
+            ✖
+          </button>
+        </div>
+      )}
     </div>
   );
 };
 
-export default UserPage;
+export default ContactPage;

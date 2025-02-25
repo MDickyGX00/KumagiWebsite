@@ -1,55 +1,62 @@
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 import { useEffect, useState } from "react";
 
 const UserPage = () => {
-  const [users, setUsers] = useState([]); // State untuk menyimpan data pengguna
-  const [selectedUser, setSelectedUser] = useState(null); // State untuk data pengguna yang dipilih
-  const [isModalOpen, setIsModalOpen] = useState(false); // State untuk modal
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showModalDelete, setShowModalDelete] = useState(false); // Modal untuk konfirmasi hapus
+  const [selectedDeleteUser, setSelectedDeleteUser] = useState(null); // Simpan user yang akan dihapus
+  const [showNotification, setShowNotification] = useState(false); // Modal notifikasi
+  const [notificationMessage, setNotificationMessage] = useState(""); // Pesan notifikasi
 
-  // Mengambil data pengguna dari database saat komponen dimuat
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/review") // Pastikan endpoint sudah sesuai
+    axiosInstance
+      .get("/review")
       .then((response) => {
-        setUsers(response.data); // Simpan data pengguna ke state
+        setUsers(response.data);
       })
       .catch((error) => {
         console.error("Gagal mengambil data pengguna:", error);
-        alert("Gagal memuat data pengguna. Silakan coba lagi nanti.");
+        showAlert("Gagal memuat data pengguna. Silakan coba lagi nanti.");
       });
   }, []);
 
   const handleRead = (user) => {
-    setSelectedUser(user); // Simpan data pengguna yang dipilih
-    setIsModalOpen(true); // Buka modal
+    setSelectedUser(user);
+    setIsModalOpen(true);
   };
 
-  // Fungsi untuk menutup modal
   const closeModal = () => {
-    setSelectedUser(null); // Reset data pengguna yang dipilih
-    setIsModalOpen(false); // Tutup modal
+    setSelectedUser(null);
+    setIsModalOpen(false);
   };
 
-  // Fungsi untuk menghapus data pengguna
-  const handleDelete = (id) => {
-    const confirmDelete = window.confirm(
-      "Apakah Anda yakin ingin menghapus data ini?"
-    );
-    if (!confirmDelete) return;
+  // Fungsi untuk membuka modal konfirmasi sebelum hapus
+  const handleDelete = (user) => {
+    setSelectedDeleteUser(user); // Simpan data pengguna yang ingin dihapus
+    setShowModalDelete(true); // Tampilkan modal
+  };
 
-    axios
-      .delete(`http://10.20.20.23:8080/review/${id}`) // Pastikan endpoint sudah sesuai
+  // Fungsi untuk menghapus setelah konfirmasi
+  const confirmDelete = () => {
+    if (!selectedDeleteUser) return;
+
+    axiosInstance
+      .delete(`/review/${selectedDeleteUser.id}`)
       .then(() => {
-        alert("Data berhasil dihapus!");
-        setUsers(users.filter((user) => user.id !== id)); // Perbarui state
+        showAlert("Data berhasil dihapus!");
+        setUsers(users.filter((user) => user.id !== selectedDeleteUser.id));
       })
       .catch((error) => {
         console.error("Gagal menghapus data:", error);
-        alert("Terjadi kesalahan saat menghapus data.");
+        showAlert("Terjadi kesalahan saat menghapus data.");
       });
+
+    setShowModalDelete(false);
+    setSelectedDeleteUser(null);
   };
 
-  // Fungsi untuk memberikan deskripsi rating
   const getRatingDescription = (rating) => {
     switch (rating) {
       case 1:
@@ -63,13 +70,18 @@ const UserPage = () => {
       case 5:
         return "5 - Sangat Bagus";
       default:
-        return "Nilai tidak valid"; // Untuk menangani nilai yang tidak sesuai
+        return "Nilai tidak valid";
     }
+  };
+
+  const showAlert = (message) => {
+    setNotificationMessage(message);
+    setShowNotification(true);
   };
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Daftar Admin</h1>
+      <h1 className="text-2xl font-bold mb-4">Daftar Review</h1>
       <div className="bg-white shadow rounded overflow-x-auto">
         <table className="table-auto w-full border-collapse border border-gray-300">
           <thead>
@@ -116,7 +128,7 @@ const UserPage = () => {
                         <i className="ri-eye-line"></i>
                       </button>
                       <button
-                        onClick={() => handleDelete(user.id)}
+                        onClick={() => handleDelete(user)}
                         className="px-2 text-2xl text-red-500 bg-white border-2 border-red-500 hover:bg-red-500 hover:text-white rounded-xl transition-all"
                       >
                         <i className="ri-delete-bin-5-fill"></i>
@@ -138,6 +150,35 @@ const UserPage = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Modal Konfirmasi Hapus */}
+      {showModalDelete && selectedDeleteUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h3 className="text-lg font-bold mb-4">Konfirmasi Hapus</h3>
+            <p>
+              Apakah Anda yakin ingin menghapus review dari{" "}
+              <strong>{selectedDeleteUser.nama}</strong>?
+            </p>
+            <div className="mt-4 flex justify-between space-x-2">
+              <button
+                onClick={() => setShowModalDelete(false)}
+                className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+              >
+                Batal
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+              >
+                Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Detail Review */}
       {isModalOpen && selectedUser && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded shadow-lg w-96">
@@ -159,12 +200,20 @@ const UserPage = () => {
               </p>
             </div>
             <button
-              onClick={() => closeModal(false)}
+              onClick={closeModal}
               className="w-full p-2 mt-2 bg-gray-300 text-black rounded hover:bg-gray-400 transition-all"
             >
               Tutup
             </button>
           </div>
+        </div>
+      )}
+      {showNotification && (
+        <div className="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg">
+          {notificationMessage}
+          <button onClick={() => setShowNotification(false)} className="ml-4">
+            ✖
+          </button>
         </div>
       )}
     </div>

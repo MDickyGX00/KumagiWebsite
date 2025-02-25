@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 
 const ProductPage = () => {
   const [products, setProducts] = useState([]); // Menyimpan data produk
   const [showModal, setShowModal] = useState(false); // Menampilkan form modal
   const [modalType, setModalType] = useState("add"); // Jenis modal: add, read, update
   const [currentProduct, setCurrentProduct] = useState({}); // Data produk yang sedang diproses
+  const [showConfirmModal, setShowConfirmModal] = useState(false); // Modal konfirmasi hapus
+  const [showNotification, setShowNotification] = useState(false); // Modal notifikasi
+  const [notificationMessage, setNotificationMessage] = useState(""); // Pesan notifikasi
+  const [deleteProductId, setDeleteProductId] = useState(null); // ID produk yang akan dihapus
 
   // Fetch data produk dari database
   useEffect(() => {
@@ -14,27 +18,23 @@ const ProductPage = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8080/produk-makanan"
-      );
+      const response = await axiosInstance.get("/produk-makanan");
       setProducts(response.data);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
   };
 
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "Apakah Anda yakin ingin menghapus produk ini?"
-    );
-    if (!confirmDelete) return;
-
+  const handleDelete = async () => {
+    if (!deleteProductId) return;
     try {
-      await axios.delete(`http://10.20.20.23:8080/produk-makanan/${id}`);
-      alert("Produk berhasil dihapus!");
-      setProducts(products.filter((product) => product.id !== id));
+      await axiosInstance.delete(`/produk-makanan/${deleteProductId}`);
+      setProducts(products.filter((product) => product.id !== deleteProductId));
+      showAlert("Produk berhasil dihapus!");
     } catch (error) {
       console.error("Error deleting product:", error);
+    } finally {
+      setShowConfirmModal(false);
     }
   };
 
@@ -42,21 +42,21 @@ const ProductPage = () => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("namaProduk", currentProduct.namaProduk || "");
+    formData.append("deskripsi", currentProduct.deskripsi || "");
     formData.append("jenisMakanan", currentProduct.jenisMakanan || "");
     formData.append("hargaProduk", currentProduct.hargaProduk || 0);
     formData.append("image", currentProduct.image || null);
-    formData.append("deskripsi", currentProduct.deskripsiProduk || "");
 
     try {
       if (modalType === "add") {
-        await axios.post("http://10.20.20.23:8080/produk-makanan", formData);
-        alert("Produk berhasil ditambahkan!");
+        await axiosInstance.post("/produk-makanan", formData);
+        showAlert("Produk berhasil ditambahkan!");
       } else if (modalType === "update") {
-        await axios.put(
-          `http://10.20.20.23:8080/produk-makanan/${currentProduct.id}`,
+        await axiosInstance.put(
+          `/produk-makanan/${currentProduct.id}`,
           formData
         );
-        alert("Produk berhasil diperbarui!");
+        showAlert("Produk berhasil diperbarui!");
       }
       fetchProducts();
       setShowModal(false);
@@ -69,6 +69,11 @@ const ProductPage = () => {
     setModalType(type);
     setCurrentProduct(type === "add" ? {} : product);
     setShowModal(true);
+  };
+
+  const showAlert = (message) => {
+    setNotificationMessage(message);
+    setShowNotification(true);
   };
 
   return (
@@ -120,7 +125,7 @@ const ProductPage = () => {
                     {product.namaProduk}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {product.deksripsiProduk}
+                    {product.deskripsi}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
                     {(() => {
@@ -164,7 +169,10 @@ const ProductPage = () => {
                         <i className="ri-edit-line"></i>
                       </button>
                       <button
-                        onClick={() => handleDelete(product.id)}
+                        onClick={() => {
+                          setDeleteProductId(product.id);
+                          setShowConfirmModal(true);
+                        }}
                         className="px-2 text-2xl text-red-500 bg-white border-2 border-red-500 hover:bg-red-500 hover:text-white rounded-xl transition-all"
                       >
                         <i className="ri-delete-bin-5-fill"></i>
@@ -198,7 +206,9 @@ const ProductPage = () => {
             </h2>
             <form onSubmit={handleFormSubmit}>
               <div className="mb-4">
-                <label className="block font-medium text-gray-700">Nama Produk</label>
+                <label className="block font-medium text-gray-700">
+                  Nama Produk
+                </label>
                 <input
                   type="text"
                   name="namaProduk"
@@ -214,7 +224,26 @@ const ProductPage = () => {
                 />
               </div>
               <div className="mb-4">
-                <label className="block font-medium text-gray-700">Jenis Makanan</label>
+                <label className="block font-medium text-gray-700">
+                  Deskripsi
+                </label>
+                <textarea
+                  name="deskripsi"
+                  value={currentProduct.deskripsi || ""}
+                  onChange={(e) =>
+                    setCurrentProduct({
+                      ...currentProduct,
+                      [e.target.name]: e.target.value,
+                    })
+                  }
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400"
+                  disabled={modalType === "read"}
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block font-medium text-gray-700">
+                  Jenis Makanan
+                </label>
                 <select
                   name="jenisMakanan"
                   value={currentProduct.jenisMakanan || ""}
@@ -251,7 +280,9 @@ const ProductPage = () => {
                 />
               </div>
               <div className="mb-4">
-                <label className="block font-medium text-gray-700">Gambar</label>
+                <label className="block font-medium text-gray-700">
+                  Gambar
+                </label>
                 {modalType === "read" ? (
                   currentProduct.imageUrl ? (
                     <img
@@ -293,6 +324,39 @@ const ProductPage = () => {
               </button>
             </form>
           </div>
+        </div>
+      )}
+      {showConfirmModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl">
+            <p className="text-lg font-bold mb-4">
+              Apakah Anda yakin ingin menghapus produk ini?
+            </p>
+            <div className="flex justify-between">
+              <button
+                onClick={() => setShowConfirmModal(false)}
+                className="px-4 py-2 bg-gray-300 rounded transition-all hover:bg-gray-400"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-500 text-white rounded transition-all hover:bg-red-600"
+              >
+                Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Notifikasi */}
+      {showNotification && (
+        <div className="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg">
+          {notificationMessage}
+          <button onClick={() => setShowNotification(false)} className="ml-4">
+            ✖
+          </button>
         </div>
       )}
     </div>

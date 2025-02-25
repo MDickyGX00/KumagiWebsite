@@ -1,121 +1,253 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Import Link dan useNavigate
-import axiosInstance, { cekLogin } from "./axiosInstance"; // Import axiosInstance dan cekLogin
+import { useNavigate } from "react-router-dom";
+import axiosInstance, { cekLogin } from "./axiosInstance";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState(""); // Menyimpan nama pengguna
   const [tampil, setTampil] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
 
-  // Mengecek status login saat komponen pertama kali dirender
   useEffect(() => {
     const checkAuth = async () => {
-      const status = await cekLogin(); // Panggil fungsi cekLogin()
+      const status = await cekLogin();
       setIsLoggedIn(status);
+
+      if (status) {
+        try {
+          const response = await axiosInstance.get("/user/me", {
+            withCredentials: true, // Pastikan cookie dikirim
+          });
+
+          if (response.data && response.data.nama) {
+            setUserName(response.data.nama);
+          } else {
+            console.error(
+              "Field 'nama' tidak ditemukan dalam respons:",
+              response.data
+            );
+          }
+        } catch (error) {
+          console.error("Gagal mengambil data pengguna:", error);
+        }
+      } else {
+        setUserName(""); // Reset nama jika tidak login
+      }
     };
 
-    checkAuth(); // Cek saat pertama kali render
+    checkAuth();
 
-    // Event listener untuk memantau perubahan login/logout
     const interval = setInterval(() => {
       checkAuth();
-    }, 3000); // Cek setiap 3 detik
+    }, 3000);
 
     return () => clearInterval(interval);
   }, []);
 
   const handleLogout = async () => {
     try {
-      await axiosInstance.post("/logout"); // Panggil API logout di backend
-      
-      // Hapus cookie secara eksplisit (gunakan path sesuai domain backend)
-      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-  
-      setIsLoggedIn(false); // Update state
-      navigate("/login"); // Redirect ke halaman login
+      await axiosInstance.post("/logout");
+
+      document.cookie =
+        "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+
+      setIsLoggedIn(false);
+      setUserName(""); // Reset nama saat logout
+      navigate("/login");
     } catch (error) {
       console.error("Logout gagal", error);
     }
   };
-  
-
-  const handleClick = () => {
-    setTampil(!tampil);
-  };
-
-  let menuActive = tampil ? "left-0" : "-left-full";
-  let scrollActive = "py-6 bg-white shadow"; // Bisa diatur sesuai kebutuhan
 
   return (
-    <div className={`navbar fixed w-full transition-all ${scrollActive}`}>
-      <div className="container mx-auto px-4">
-        <div className="navbar-box flex items-center justify-between">
-          <a href="/">
-            <div className="logo">
-              <h1 className="sm:text-2xl text-xl font-bold">Kumagi Bake.</h1>
-            </div>
-          </a>
-          <ul
-            className={`flex lg:gap-12 gap-8 lg:static lg:flex-row lg:shadow-none lg:p-0 lg:m-0 lg:transition-none lg:bg-transparent lg:w-auto lg:h-full lg:translate-y-0 fixed ${menuActive} top-1/2 -translate-y-1/2 flex-col px-8 py-6 rounded shadow-md shadow-black bg-yellow-400 font-bold lg:text-black text-black transition-all`}
-          >
-            <li>
-              <a href="/#home" className="font-medium opacity-75">
-                Beranda
-              </a>
-            </li>
-            <li>
-              <a href="/#about" className="font-medium opacity-75">
-                Tentang Kami
-              </a>
-            </li>
-            <li>
-              <a href="/#testimoni" className="font-medium opacity-75">
-                Testimoni
-              </a>
-            </li>
-            <li>
-              <a href="/#produk" className="font-medium opacity-75">
-                Produk
-              </a>
-            </li>
-            <li>
-              <a href="/#kontak" className="font-medium opacity-75">
-                Kontak
-              </a>
-            </li>
-          </ul>
-          <div className="social flex items-center gap-2">
-            {isLoggedIn ? (
+    <nav className="bg-white fixed w-full z-10 shadow-lg">
+      <div className="max-w-7xl py-2 mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16 items-center">
+          {/* Logo */}
+          <div className="flex items-center">
+            <a href="/" className="text-black text-xl font-bold">
+              Kumagi Bake.
+            </a>
+          </div>
+
+          {/* Menu Items - Desktop */}
+          <div className="hidden md:flex space-x-8">
+            <a href="/#home" className="text-black-300">
+              Beranda
+            </a>
+            <a href="/#about" className="text-black-300">
+              Tentang Kami
+            </a>
+            <a href="/#testimoni" className="text-black-300">
+              Testimoni
+            </a>
+            <a href="/#produk" className="text-black-300">
+              Produk
+            </a>
+            <a href="/#kontak" className="text-black-300">
+              Kontak
+            </a>
+          </div>
+
+          {/* Profile / Login Dropdown - Desktop */}
+          <div className="hidden md:flex items-center space-x-4">
+            <div className="relative ml-3">
               <button
-                onClick={handleLogout}
-                className="bg-red-500 px-5 py-2 rounded-lg text-white font-bold hover:bg-red-600 transition-all"
+                type="button"
+                className="relative flex max-w-xs items-center rounded-full px-2 py-1 border-black border-2 text-black text-3xl hover:bg-black hover:text-white transition-all"
+                onClick={() => setShowDropdown(!showDropdown)}
               >
-                Logout
+                <span className="absolute -inset-1.5"></span>
+                <span className="sr-only">Open user menu</span>
+                <i className="ri-user-line"></i>
               </button>
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="bg-yellow-400 px-5 py-2 rounded-lg text-black font-bold hover:bg-yellow-500 transition-all"
+
+              {/* Dropdown */}
+              {showDropdown && (
+                <div className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 ring-1 shadow-lg ring-black/5">
+                  {isLoggedIn ? (
+                    <>
+                      <div className="px-4 py-2 text-sm font-semibold text-gray-900">
+                        Halo, {userName} 👋
+                      </div>
+                      <hr className="border-gray-200" />
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                      >
+                        Sign out
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <a
+                        href="/login"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Login
+                      </a>
+                      <a
+                        href="/register"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Daftar
+                      </a>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center">
+            {/* Profile / Login Dropdown - Mobile */}
+            <div className="md:flex items-center space-x-4 px-4">
+              <div className="relative ml-3">
+                <button
+                  type="button"
+                  className="relative flex max-w-xs items-center rounded-full px-2 py-1 border-black border-2 text-black text-3xl hover:bg-black hover:text-white transition-all"
+                  onClick={() => setShowDropdown(!showDropdown)}
                 >
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  className="bg-yellow-400 px-5 py-2 rounded-lg text-black font-bold hover:bg-yellow-500 transition-all"
-                >
-                  Daftar
-                </Link>
-              </>
-            )}
-            <i
-              className="ri-menu-line text-3xl lg:hidden block"
-              onClick={handleClick}
-            ></i>
+                  <span className="absolute -inset-1.5"></span>
+                  <span className="sr-only">Open user menu</span>
+                  <i className="ri-user-line"></i>
+                </button>
+
+                {/* Dropdown */}
+                {showDropdown && (
+                  <div className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 ring-1 shadow-lg ring-black/5">
+                    {isLoggedIn ? (
+                      <>
+                        <div className="px-4 py-2 text-sm font-semibold text-gray-900">
+                          Halo, {userName} 👋
+                        </div>
+                        <hr className="border-gray-200" />
+                        <button
+                          onClick={handleLogout}
+                          className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                        >
+                          Sign out
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <a
+                          href="/login"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Login
+                        </a>
+                        <a
+                          href="/register"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Daftar
+                        </a>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+            <button
+              onClick={() => setTampil(!tampil)}
+              className="text-black focus:outline-none"
+            >
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                {tampil ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M4 6h16M4 12h16m-16 6h16"
+                  />
+                )}
+              </svg>
+            </button>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Mobile Menu */}
+      <div
+        className={`md:hidden bg-white shadow-md transition-all duration-300 ${
+          tampil ? "block" : "hidden"
+        }`}
+      >
+        <a href="/#home" className="block px-4 py-2 text-black-300">
+          Beranda
+        </a>
+        <hr className="border-gray-200" />
+        <a href="/#about" className="block px-4 py-2 text-black-300">
+          Tentang Kami
+        </a>
+        <hr className="border-gray-200" />
+        <a href="/#testimoni" className="block px-4 py-2 text-black-300">
+          Testimoni
+        </a><hr className="border-gray-200" />
+        <a href="/#produk" className="block px-4 py-2 text-black-300">
+          Produk
+        </a><hr className="border-gray-200" />
+        <hr className="border-gray-200" />
+        <a href="/#kontak" className="block px-4 py-2 text-black-300">
+          Kontak
+        </a>
+      </div>
+    </nav>
   );
 };
 

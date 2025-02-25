@@ -1,5 +1,6 @@
-import axios from "axios";
-import { useState } from "react";
+import axiosInstance from "./axiosInstance"; // Gunakan axiosInstance
+import { useState, useEffect } from "react";
+import Cookies from "js-cookie"; // Import Cookies
 
 const ContactUs = () => {
   const [credentials, setCredentials] = useState({
@@ -7,19 +8,40 @@ const ContactUs = () => {
     pesan: "",
   });
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  // Mengecek apakah pengguna sudah login
+  useEffect(() => {
+    const token = Cookies.get("jwt_token");
+    if (token) {
+      axiosInstance
+        .get("/validate-token")
+        .then(() => setIsLoggedIn(true))
+        .catch(() => setIsLoggedIn(false));
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, []);
+
   const handleChange = (e) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios
-      .post("http://localhost:8080/kontak", credentials)
-      .then((response) => {
-        console.log(response.data); // Debugging respons API
-        alert("Pesan berhasil dikirim"); // Menampilkan pesan pop-up
 
-        // Reset input form ke nilai awal
+    if (!isLoggedIn) {
+      setShowLoginModal(true); // Tampilkan modal jika belum login
+      return;
+    }
+
+    axiosInstance
+      .post("/kontak", credentials)
+      .then((response) => {
+        console.log(response.data);
+        alert("Pesan berhasil dikirim");
+
         setCredentials({
           email: "",
           pesan: "",
@@ -27,7 +49,7 @@ const ContactUs = () => {
       })
       .catch((error) => {
         console.error(error);
-        alert("Gagal mengirim pesan. Silakan coba lagi."); // Menampilkan pesan error
+        alert("Gagal mengirim pesan. Silakan coba lagi.");
       });
   };
 
@@ -40,8 +62,7 @@ const ContactUs = () => {
         Jika anda memiliki keluhan, silahkan hubungi kami disini!
       </p>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        {/* Kiri: Informasi Kontak */}
-        <div className="hidden sm:grid grid-cols-2 gap-4 px-10 ">
+        <div className="hidden sm:grid grid-cols-2 gap-4 px-10">
           <div className="p-4 border rounded shadow bg-white text-center py-10">
             <i className="ri-mail-line text-7xl text-yellow-300"></i>
             <h3 className="font-bold mb-1">Email</h3>
@@ -67,7 +88,7 @@ const ContactUs = () => {
           </div>
         </div>
 
-        {/* Kanan: Form Kontak */}
+        {/* Form */}
         <div className="bg-yellow-200 p-5 rounded-xl shadow-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -107,6 +128,24 @@ const ContactUs = () => {
           </form>
         </div>
       </div>
+
+      {/* Modal Peringatan Login */}
+      {showLoginModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-96 text-center">
+            <h2 className="text-lg font-bold mb-4">Anda Harus Login</h2>
+            <p>Silakan login terlebih dahulu untuk menghubungi kami.</p>
+            <div className="mt-4">
+              <button
+                onClick={() => setShowLoginModal(false)}
+                className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

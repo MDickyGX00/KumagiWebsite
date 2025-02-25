@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://10.20.20.213:8080", // Sesuaikan dengan backend kamu
+  baseURL: "http://localhost:8080", // Sesuaikan dengan backend kamu
   withCredentials: true, // Penting agar cookie dikirim!
 });
 

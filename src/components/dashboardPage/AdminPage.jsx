@@ -1,5 +1,5 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
+import axiosInstance from "../axiosInstance";
 
 const UserPage = () => {
   const [users, setUsers] = useState([]); // State untuk menyimpan data pengguna
@@ -7,8 +7,8 @@ const UserPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State untuk modal
   // Mengambil data pengguna dari database saat komponen dimuat
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/admin")
+    axiosInstance
+      .get("/admin")
       .then((response) => {
         setUsers(response.data); // Simpan data pengguna ke state
       })

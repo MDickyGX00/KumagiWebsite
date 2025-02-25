@@ -50,7 +50,7 @@ function Login() {
       // Simpan token ke cookie dengan konfigurasi yang benar
       Cookies.set("jwt_token", token, {
         path: "/",
-        domain: "10.20.20.213", // Pastikan sesuai dengan domain backend
+        domain: "localhost", // Pastikan sesuai dengan domain backend
         sameSite: "Lax", // Untuk menghindari penolakan cookie di browser
         secure: false, // Set `true` jika menggunakan HTTPS
         expires: 1,
