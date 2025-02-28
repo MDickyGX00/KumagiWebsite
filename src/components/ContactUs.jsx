@@ -55,12 +55,6 @@ const ContactUs = () => {
 
   return (
     <div className="kontak bg-yellow-400 px-5 py-20" id="kontak">
-      <h2 className="xl:text-5xl text-2xl font-bold mb-2 text-center">
-        Hubungi Kami
-      </h2>
-      <p className="text-center mb-10">
-        Jika anda memiliki keluhan, silahkan hubungi kami disini!
-      </p>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         <div className="hidden sm:grid grid-cols-2 gap-4 px-10">
           <div className="p-4 border rounded shadow bg-white text-center py-10">
@@ -89,43 +83,60 @@ const ContactUs = () => {
         </div>
 
         {/* Form */}
-        <div className="bg-yellow-200 p-5 rounded-xl shadow-2xl">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-1">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                name="email"
-                value={credentials.email}
-                onChange={handleChange}
-                className="w-full border px-4 py-2 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="pesan" className="block text-sm font-medium mb-1">
-                Pesan
-              </label>
-              <textarea
-                id="pesan"
-                name="pesan"
-                value={credentials.pesan}
-                onChange={handleChange}
-                className="w-full border px-4 py-2 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-                rows="4"
-                required
-              ></textarea>
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-yellow-700 text-white py-2 rounded-full transition-all hover:bg-yellow-800 shadow-lg"
-            >
-              Kirim
-            </button>
-          </form>
+        <div className="bg-yellow-200 p-10 rounded-xl flex items-center justify-center h-full w-full">
+          <div className="w-full max-w-2xl">
+            {/* Judul & Deskripsi */}
+            <h2 className="xl:text-5xl text-2xl font-bold mb-2 text-center">
+              Hubungi Kami
+            </h2>
+            <p className="text-center mb-10">
+              Jika anda memiliki keluhan, silahkan hubungi kami disini!
+            </p>
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-6 w-full">
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium mb-1"
+                >
+                  Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  name="email"
+                  value={credentials.email}
+                  onChange={handleChange}
+                  className="w-full border px-4 py-3 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="pesan"
+                  className="block text-sm font-medium mb-1"
+                >
+                  Pesan
+                </label>
+                <textarea
+                  id="pesan"
+                  name="pesan"
+                  value={credentials.pesan}
+                  onChange={handleChange}
+                  className="w-full border px-4 py-3 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                  rows="5"
+                  required
+                ></textarea>
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-yellow-700 text-white py-3 rounded-full transition-all hover:bg-yellow-800 shadow-lg"
+              >
+                Kirim
+              </button>
+            </form>
+          </div>
         </div>
       </div>
 

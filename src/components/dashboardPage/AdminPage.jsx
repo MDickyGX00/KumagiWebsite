@@ -5,6 +5,7 @@ const UserPage = () => {
   const [users, setUsers] = useState([]); // State untuk menyimpan data pengguna
   const [selectedUser, setSelectedUser] = useState(null); // State untuk data pengguna yang dipilih
   const [isModalOpen, setIsModalOpen] = useState(false); // State untuk modal
+  const [searchQuery, setSearchQuery] = useState("");
   // Mengambil data pengguna dari database saat komponen dimuat
   useEffect(() => {
     axiosInstance
@@ -27,40 +28,51 @@ const UserPage = () => {
     setIsModalOpen(false); // Tutup modal
   };
 
+  const filteredUsers = users.filter(
+    (user) =>
+      (user.nama && user.nama.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (user.email && user.email.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Daftar Admin</h1>
-      <div className="bg-white shadow rounded overflow-x-auto">
+      <div className="mb-4">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Cari Admin..."
+          className="p-2 border rounded w-full"
+        />
+      </div>
+      <div className="bg-white rounded overflow-x-auto">
         <table className="table-auto w-full border-collapse border border-gray-300">
           <thead>
             <tr>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2 font-medium bg-gray-200">
                 No
               </th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2 font-medium bg-gray-200">
                 Nama
               </th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2 font-medium bg-gray-200">
                 Email
               </th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2 font-medium bg-gray-200">
                 Aksi
               </th>
             </tr>
           </thead>
           <tbody>
-            {users.length > 0 ? (
-              users.map((user, index) => (
+            {filteredUsers.length > 0 ? (
+              filteredUsers.map((user, index) => (
                 <tr key={index}>
                   <td className="border border-gray-300 px-4 py-2 text-center">
                     {index + 1}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {user.nama}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {user.email}
-                  </td>
+                  <td className="border border-gray-300 px-4 py-2">{user.nama}</td>
+                  <td className="border border-gray-300 px-4 py-2">{user.email}</td>
                   <td className="border border-gray-300 px-4 py-2 text-center">
                     <div className="flex justify-center space-x-2">
                       <button
@@ -75,10 +87,7 @@ const UserPage = () => {
               ))
             ) : (
               <tr>
-                <td
-                  colSpan="3"
-                  className="border border-gray-300 px-4 py-2 text-center text-gray-500"
-                >
+                <td colSpan="4" className="border border-gray-300 px-4 py-2 text-center text-gray-500">
                   Tidak ada data pengguna.
                 </td>
               </tr>
@@ -100,7 +109,7 @@ const UserPage = () => {
             </div>
             <button
               onClick={() => closeModal(false)}
-              className="w-full p-2 mt-2 bg-gray-300 text-black rounded hover:bg-gray-400 transition-all"
+              className="w-full p-2 mt-2 bg-gray-300 text-black rounded-lg hover:bg-gray-400 transition-all"
             >
               Tutup
             </button>

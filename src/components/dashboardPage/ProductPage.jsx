@@ -10,7 +10,7 @@ const ProductPage = () => {
   const [showNotification, setShowNotification] = useState(false); // Modal notifikasi
   const [notificationMessage, setNotificationMessage] = useState(""); // Pesan notifikasi
   const [deleteProductId, setDeleteProductId] = useState(null); // ID produk yang akan dihapus
-
+  const [searchQuery, setSearchQuery] = useState("");
   // Fetch data produk dari database
   useEffect(() => {
     fetchProducts();
@@ -76,9 +76,29 @@ const ProductPage = () => {
     setShowNotification(true);
   };
 
+  // Filter produk berdasarkan pencarian
+  const filteredProducts = products.filter(
+    (product) =>
+      (product.namaProduk &&
+        product.namaProduk.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (product.deskripsi &&
+        product.deskripsi.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (product.jenisMakanan &&
+        product.jenisMakanan.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Manajemen Produk</h1>
+      <div className="mb-4">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Cari Produk..."
+          className="p-2 border rounded w-full"
+        />
+      </div>
       <div className="flex justify-end mb-4">
         <button
           onClick={() => openModal("add")}
@@ -87,36 +107,36 @@ const ProductPage = () => {
           <i className="ri-add-line"></i>
         </button>
       </div>
-      <div className="bg-white shadow rounded overflow-x-auto">
+      <div className="bg-white rounded overflow-x-auto">
         <table className="table-auto w-full border-collapse border border-gray-300">
           <thead>
             <tr>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2 font-medium bg-gray-200">
                 No
               </th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2 font-medium bg-gray-200">
                 Nama Produk
               </th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2 font-medium bg-gray-200">
                 Deskripsi
               </th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2 font-medium bg-gray-200">
                 Jenis
               </th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2 font-medium bg-gray-200">
                 Harga
               </th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2 font-medium bg-gray-200">
                 Gambar
               </th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2 font-medium bg-gray-200">
                 Aksi
               </th>
             </tr>
           </thead>
           <tbody>
-            {products.length > 0 ? (
-              products.map((product, index) => (
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map((product, index) => (
                 <tr key={index}>
                   <td className="border border-gray-300 px-4 py-2 text-center">
                     {index + 1}
@@ -187,7 +207,7 @@ const ProductPage = () => {
                   colSpan="7"
                   className="border border-gray-300 px-4 py-2 text-center text-gray-500"
                 >
-                  Tidak ada data produk.
+                  Tidak ada produk yang ditemukan.
                 </td>
               </tr>
             )}
@@ -318,7 +338,7 @@ const ProductPage = () => {
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="w-full p-2 mt-2 bg-gray-300 text-black rounded hover:bg-gray-400 transition-all"
+                className="w-full p-2 mt-2 bg-gray-300 text-black rounded-lg hover:bg-gray-400 transition-all"
               >
                 Tutup
               </button>
@@ -329,19 +349,19 @@ const ProductPage = () => {
       {showConfirmModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-xl">
-            <p className="text-lg font-bold mb-4">
+            <p className="text-xl mb-6">
               Apakah Anda yakin ingin menghapus produk ini?
             </p>
-            <div className="flex justify-between">
+            <div className="flex justify-end">
               <button
                 onClick={() => setShowConfirmModal(false)}
-                className="px-4 py-2 bg-gray-300 rounded transition-all hover:bg-gray-400"
+                className="px-4 mx-1 py-2 bg-gray-300 rounded transition-all hover:bg-gray-400"
               >
                 Batal
               </button>
               <button
                 onClick={handleDelete}
-                className="px-4 py-2 bg-red-500 text-white rounded transition-all hover:bg-red-600"
+                className="px-4 mx-1 py-2 bg-red-500 text-white rounded transition-all hover:bg-red-600"
               >
                 Hapus
               </button>

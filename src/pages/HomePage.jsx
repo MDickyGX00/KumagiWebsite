@@ -53,24 +53,20 @@ const HomePage = () => {
           {/* Teks di sebelah kanan */}
           <div className="box border-y-4 border-yellow-400 py-2">
             <p className="text-base/normal md:text-xl 2xl:text-2xl font-light">
-              Kumagi Bake lahir dari cinta kami terhadap seni membuat kue dan
-              kebahagiaan yang dibawanya. Sejak awal, visi kami sederhana:
-              menciptakan kue berkualitas tinggi yang tidak hanya memanjakan
-              lidah tetapi juga menghadirkan momen manis dalam kehidupan Anda.
+              Kumagi Bake hadir untuk menghadirkan kue berkualitas tinggi yang
+              tidak hanya lezat, tetapi juga membawa kebahagiaan di setiap
+              gigitan. Dengan bahan terbaik dan sentuhan resep tradisional serta
+              modern, kami menciptakan kue yang penuh rasa dan kenangan. Baik
+              untuk perayaan, kejutan, atau sekadar memanjakan diri, kue-kue
+              kami siap menyempurnakan hari Anda.
             </p>
-            <br />
-            <p className="text-base/normal md:text-xl 2xl:text-2xl font-light">
-              Kami percaya bahwa setiap kue memiliki cerita, dan setiap gigitan
-              dapat menciptakan kenangan indah. Oleh karena itu, kami
-              menggunakan bahan-bahan terbaik, teknik tradisional yang dipadukan
-              dengan sentuhan modern, serta perhatian penuh pada setiap detail.
-            </p>
-            <br />
-            <p className="text-base/normal md:text-xl 2xl:text-2xl font-light">
-              Di Kumagi Bake, kami menawarkan lebih dari sekadar kue—kami
-              menawarkan pengalaman. Baik itu untuk perayaan besar, kejutan
-              kecil, atau sekadar hadiah untuk diri sendiri, kue-kue kami selalu
-              siap menyempurnakan hari Anda.
+            <p className="mt-4 text-blue-600 hover:underline">
+              📍{" "}
+              <a
+                href="https://maps.app.goo.gl/ag8iVF1XKU1ZBbVi9"
+              >
+                Lihat Lokasi di Google Maps
+              </a>
             </p>
           </div>
         </div>

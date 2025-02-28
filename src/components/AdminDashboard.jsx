@@ -9,6 +9,7 @@ import AdminPage from "./dashboardPage/AdminPage";
 import ReviewPage from "./dashboardPage/ReviewsPage";
 import ContactPage from "./dashboardPage/ContactPage";
 import SideNavbar from "../components/SIdeNavAdmin";
+import LinkPage from "./dashboardPage/LinkPage";
 
 const AdminDashboard = ({ setUserRole }) => {
   const navigate = useNavigate();
@@ -70,6 +71,8 @@ const AdminDashboard = ({ setUserRole }) => {
         return <ProductPage />;
       case "Reviews":
         return <ReviewPage />;
+      case "Link":
+        return <LinkPage />;
       default:
         return (
           <div>

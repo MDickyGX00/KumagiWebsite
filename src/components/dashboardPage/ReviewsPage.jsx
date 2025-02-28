@@ -9,6 +9,7 @@ const UserPage = () => {
   const [selectedDeleteUser, setSelectedDeleteUser] = useState(null); // Simpan user yang akan dihapus
   const [showNotification, setShowNotification] = useState(false); // Modal notifikasi
   const [notificationMessage, setNotificationMessage] = useState(""); // Pesan notifikasi
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     axiosInstance
@@ -79,46 +80,56 @@ const UserPage = () => {
     setShowNotification(true);
   };
 
+  const filteredUsers = users.filter(
+    (user) =>
+      (user.nama &&
+        user.nama.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (user.komentar &&
+        user.komentar.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (user.nilai && getRatingDescription(user.nilai).toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Daftar Review</h1>
-      <div className="bg-white shadow rounded overflow-x-auto">
+      <div className="mb-4">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Cari Review..."
+          className="p-2 border rounded w-full"
+        />
+      </div>
+      <div className="bg-white rounded overflow-x-auto">
         <table className="table-auto w-full border-collapse border border-gray-300">
           <thead>
             <tr>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2 font-medium bg-gray-200">
                 No
               </th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2 font-medium bg-gray-200">
                 Nama
               </th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2 font-medium bg-gray-200">
                 Komentar
               </th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2 font-medium bg-gray-200">
                 Rating
               </th>
-              <th className="border border-gray-300 px-4 py-2 bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2 font-medium bg-gray-200">
                 Aksi
               </th>
             </tr>
           </thead>
           <tbody>
-            {users.length > 0 ? (
-              users.map((user, index) => (
+            {filteredUsers.length > 0 ? (
+              filteredUsers.map((user, index) => (
                 <tr key={user.id}>
-                  <td className="border border-gray-300 px-4 py-2 text-center">
-                    {index + 1}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {user.nama}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {user.komentar}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {getRatingDescription(user.nilai)}
-                  </td>
+                  <td className="border border-gray-300 px-4 py-2 text-center">{index + 1}</td>
+                  <td className="border border-gray-300 px-4 py-2">{user.nama}</td>
+                  <td className="border border-gray-300 px-4 py-2">{user.komentar}</td>
+                  <td className="border border-gray-300 px-4 py-2">{getRatingDescription(user.nilai)}</td>
                   <td className="border border-gray-300 px-4 py-2 text-center">
                     <div className="flex justify-center space-x-2">
                       <button
@@ -139,11 +150,8 @@ const UserPage = () => {
               ))
             ) : (
               <tr>
-                <td
-                  colSpan="5"
-                  className="border border-gray-300 px-4 py-2 text-center text-gray-500"
-                >
-                  Tidak ada data review.
+                <td colSpan="5" className="border border-gray-300 px-4 py-2 text-center text-gray-500">
+                  Tidak ada review yang ditemukan.
                 </td>
               </tr>
             )}
@@ -160,16 +168,16 @@ const UserPage = () => {
               Apakah Anda yakin ingin menghapus review dari{" "}
               <strong>{selectedDeleteUser.nama}</strong>?
             </p>
-            <div className="mt-4 flex justify-between space-x-2">
+            <div className="mt-4 flex space-x-2">
               <button
                 onClick={() => setShowModalDelete(false)}
-                className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+                className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 transition-all"
               >
                 Batal
               </button>
               <button
                 onClick={confirmDelete}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all"
               >
                 Hapus
               </button>
